@@ -1,8 +1,8 @@
 // IBUserManagerService.aidl
-package top.niunaijun.blackbox.core.system.user;
+package top.niunaijun.blackbox.core.system.buser;
 
 // Declare any non-default types here with import statements
-import top.niunaijun.blackbox.core.system.user.BUserInfo;
+import top.niunaijun.blackbox.core.system.buser.BUserInfo;
 import java.util.List;
 
 

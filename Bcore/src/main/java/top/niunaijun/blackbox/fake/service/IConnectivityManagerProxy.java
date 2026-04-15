@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 import android.net.Network;
 import android.net.LinkProperties;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Array;
@@ -361,7 +362,16 @@ public class IConnectivityManagerProxy extends BinderInvocationStub {
                     Slog.w(TAG, "Error creating NetworkCapabilities: " + e.getMessage());
                 }
             }
-            return method.invoke(who, args);
+            try{
+                return method.invoke(who, args);
+            } catch (IllegalAccessException e) {
+//                throw new RuntimeException(e);
+            } catch (IllegalArgumentException e) {
+//                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+//                throw new RuntimeException(e);
+            }
+            return null;
         }
     }
 

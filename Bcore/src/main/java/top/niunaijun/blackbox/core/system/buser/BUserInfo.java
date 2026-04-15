@@ -1,7 +1,9 @@
-package top.niunaijun.blackbox.core.system.user;
+package top.niunaijun.blackbox.core.system.buser;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import top.niunaijun.blackbox.core.system.user.BUserStatus;
 
 
 public class BUserInfo implements Parcelable {
@@ -10,7 +12,7 @@ public class BUserInfo implements Parcelable {
     public String name;
     public long createTime;
 
-    BUserInfo() {
+    public BUserInfo() {
     }
 
     @Override

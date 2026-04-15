@@ -393,7 +393,20 @@ public class IActivityManagerProxy extends ClassInvocationStub {
             return method.invoke(who, args);
         } catch (Exception e) {
             Slog.e(TAG, "BindServiceCommon: Unexpected error", e);
-            return method.invoke(who, args);
+            try{
+                return method.invoke(who, args);
+            } catch (Exception ex) {
+                // Fallback to safe defaults based on return type to avoid NPE from auto-unboxing
+                Class<?> ret = method.getReturnType();
+                if (ret == int.class || ret == Integer.TYPE) {
+                    return 0; // indicate failure
+                }
+                if (ret == boolean.class || ret == Boolean.TYPE) {
+                    return false;
+                }
+                return null;
+            }
+
         }
     }
 
@@ -426,6 +439,10 @@ public class IActivityManagerProxy extends ClassInvocationStub {
     public static class bindServiceInstance extends MethodHook {
         @Override
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
+            // instanceName must be null for non-isolated, non-sdk sandbox services to avoid framework IllegalArgumentException
+            if (args != null && args.length > 6) {
+                args[6] = null;
+            }
             return BindServiceCommon(who,method,args,7);
         }
 

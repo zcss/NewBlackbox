@@ -152,10 +152,12 @@ class MainActivity : LoadingActivity() {
                 title(text = "Storage Permission Required")
                 message(
                         text =
-                                "This app needs 'All Files Access' permission to properly run sandboxed apps. Without this permission, some apps may not work correctly.\n\nPlease grant permission in the next screen."
+                                "该应用需获取“所有文件访问”权限以正常运行沙盒化应用。若缺少此权限，部分应用可能无法正常运行。\n" +
+                                        "\n" +
+                                        "请在下一页授权。"
                 )
-                positiveButton(text = "Grant Permission") { openAllFilesAccessSettings() }
-                negativeButton(text = "Later") { Log.w(TAG, "User postponed storage permission") }
+                positiveButton(text = "批准") { openAllFilesAccessSettings() }
+                negativeButton(text = "稍后") { Log.w(TAG, "用户推迟了存储权限的授予") }
                 cancelable(false)
             }
         } catch (e: Exception) {

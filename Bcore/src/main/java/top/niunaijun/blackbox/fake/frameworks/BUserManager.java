@@ -8,8 +8,8 @@ import java.util.Collections;
 import java.util.List;
 
 import top.niunaijun.blackbox.core.system.ServiceManager;
-import top.niunaijun.blackbox.core.system.user.BUserInfo;
-import top.niunaijun.blackbox.core.system.user.IBUserManagerService;
+import top.niunaijun.blackbox.core.system.buser.BUserInfo;
+import top.niunaijun.blackbox.core.system.buser.IBUserManagerService;
 import top.niunaijun.blackbox.utils.Slog;
 
 

@@ -7,7 +7,8 @@ android {
 
     namespace 'top.niunaijun.blackboxa'
     compileSdk rootProject.ext.compileSdkVersion
-    ndkVersion = "29.0.13846066"
+    buildToolsVersion = "34.0.0"
+    ndkVersion = "27.0.12077973"
     defaultConfig {
         applicationId "top.niunaijun.blackbox"
         minSdk rootProject.ext.minSdk
@@ -36,14 +37,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_21
-        targetCompatibility JavaVersion.VERSION_21
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     buildFeatures {
         viewBinding true
     }
     kotlinOptions {
-        jvmTarget = '21'
+        jvmTarget = '17'
     }
 
     applicationVariants.configureEach { variant ->
