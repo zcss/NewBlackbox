@@ -7,7 +7,8 @@ android {
 
     namespace 'top.niunaijun.blackboxa'
     compileSdk rootProject.ext.compileSdkVersion
-    buildToolsVersion = "34.0.0"
+    // buildToolsVersion pinned is deprecated for AGP 8.13+; use default
+    // buildToolsVersion = "34.0.0"
     ndkVersion = "27.0.12077973"
     defaultConfig {
         applicationId "top.niunaijun.blackbox"

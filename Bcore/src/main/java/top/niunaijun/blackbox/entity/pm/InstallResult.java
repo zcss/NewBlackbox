@@ -18,6 +18,17 @@ public class InstallResult implements Parcelable {
         return 0;
     }
 
+    public boolean getSuccess(){
+        return success;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+    public String getMsg() {
+        return msg;
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeByte(this.success ? (byte) 1 : (byte) 0);

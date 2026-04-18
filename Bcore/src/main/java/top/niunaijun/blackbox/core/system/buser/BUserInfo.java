@@ -57,4 +57,8 @@ public class BUserInfo implements Parcelable {
                 ", createTime=" + createTime +
                 '}';
     }
+
+    public int getId() {
+        return id;
+    }
 }
