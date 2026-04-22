@@ -61,6 +61,7 @@ dependencies {
 
     implementation libs.appcompat
     implementation libs.core.ktx
+    implementation libs.dynamicanimation.ktx
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
@@ -81,7 +82,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.work:work-runtime:2.7.1'
-    implementation 'com.tbuonomo:dotsindicator:4.2'
+//    implementation 'com.tbuonomo:dotsindicator:4.2'
 
     
 
