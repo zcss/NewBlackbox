@@ -16,16 +16,14 @@
             android:layout_width="48dp"
             android:layout_height="48dp" />
 
-        <com.othershe.cornerlabelview.CornerLabelView
+        <View
             android:id="@+id/cornerLabel"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_gravity="top|start"
             android:visibility="invisible"
-            app:bg_color="@color/primary"
-            app:position="left_top"
-            app:text="*"
-            app:side_length="22dp" />
+            android:background="#f00"
+             />
     </FrameLayout>
 
     <LinearLayout
