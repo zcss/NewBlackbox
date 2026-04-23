@@ -10,6 +10,9 @@ import top.niunaijun.blackbox.entity.am.PendingResultData;
 import top.niunaijun.blackbox.proxy.record.ProxyBroadcastRecord;
 
 
+/**
+ * 宿主侧代理BroadcastReceiver：包装系统广播为 ProxyBroadcastRecord，转交虚拟AMS异步处理。
+ */
 public class ProxyBroadcastReceiver extends BroadcastReceiver {
     public static final String TAG = "ProxyBroadcastReceiver";
 

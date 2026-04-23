@@ -8,6 +8,11 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * AndroidId 相关方法拦截：
+ * - 针对 getAndroidId/getString/getLong/get/read 等读取路径，若返回为空/0，则提供伪造 ID；
+ * - 仅作兼容兜底，不主动替换非空合法结果。
+ */
 public class AndroidIdProxy extends ClassInvocationStub {
     public static final String TAG = "AndroidIdProxy";
 

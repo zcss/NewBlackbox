@@ -12,6 +12,9 @@ import top.niunaijun.blackbox.core.IBActivityThread;
 import top.niunaijun.blackbox.entity.AppConfig;
 import top.niunaijun.blackbox.proxy.ProxyManifest;
 
+/**
+ * 进程记录：维护沙盒进程的标识、Binder线程与客户端配置组装；提供kill与Provider authority映射。
+ */
 public class ProcessRecord extends Binder {
     public final ApplicationInfo info;
     final public String processName;

@@ -9,6 +9,12 @@ import top.niunaijun.blackbox.fake.hook.MethodHook;
 import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 
 
+/**
+ * ResourcesManager 代理：
+ * - 拦截 loadApkAssets/loadOverlayFromPath，屏蔽 resource-cache/@idmap/.frro/systemui 等路径，避免资源缓存/叠加导致崩溃或显示异常；
+ * - 其余路径透传到原方法，保持系统行为不变。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class ResourcesManagerProxy extends ClassInvocationStub {
     public static final String TAG = "ResourcesManagerProxy";
 

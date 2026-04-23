@@ -7,6 +7,9 @@ import android.os.IBinder;
 import top.niunaijun.blackbox.utils.compat.BundleCompat;
 
 
+/**
+ * 代理Activity记录：封装目标Intent/ActivityInfo与Binder句柄，通过Intent extras在宿主与沙盒间传递。
+ */
 public class ProxyActivityRecord {
     public int mUserId;
     public ActivityInfo mActivityInfo;

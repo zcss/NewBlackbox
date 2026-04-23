@@ -4,7 +4,9 @@ import android.text.TextUtils;
 
 import top.niunaijun.blackbox.utils.Reflector;
 
-
+/**
+ * SystemProperties 访问兼容：通过反射调用隐藏 API，提供 get/isExist/getInt 等便捷方法。
+ */
 public class SystemPropertiesCompat {
 
     public static String get(String key, String def) {
@@ -43,5 +45,4 @@ public class SystemPropertiesCompat {
         }
         return def;
     }
-
 }

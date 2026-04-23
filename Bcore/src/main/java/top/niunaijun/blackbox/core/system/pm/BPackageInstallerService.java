@@ -14,6 +14,9 @@ import top.niunaijun.blackbox.entity.pm.InstallOption;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * 虚拟安装器：按执行器链（创建用户/包目录、拷贝文件、移除用户/应用）完成安装、卸载、清理、更新。
+ */
 public class BPackageInstallerService extends IBPackageInstallerService.Stub implements ISystemService {
     private static final BPackageInstallerService sService = new BPackageInstallerService();
 

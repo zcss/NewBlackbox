@@ -9,6 +9,12 @@ import top.niunaijun.blackbox.utils.Slog;
 import top.niunaijun.blackbox.utils.AttributionSourceUtils;
 
 
+/**
+ * Settings.System 代理：
+ * - 通过修正 AttributionSource/UID，避免 get/put 时的 UID 校验崩溃；
+ * - 读取失败返回空串，写入失败返回 false，保证上层稳态。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class ISettingsSystemProxy extends ClassInvocationStub {
     public static final String TAG = "ISettingsSystemProxy";
 

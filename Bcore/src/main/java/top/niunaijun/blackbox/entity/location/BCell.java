@@ -3,6 +3,9 @@ package top.niunaijun.blackbox.entity.location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * 基站信息：模拟/承载蜂窝网络小区参数，用于假定位。
+ */
 public class BCell implements Parcelable {
     
 
@@ -47,6 +50,7 @@ public class BCell implements Parcelable {
         dest.writeInt(this.TYPE);
     }
 
+    /** 空构造：用于反序列化 */
     public  BCell(){}
     public BCell(int MCC, int MNC, int LAC, int CID) {
         this.TYPE = this.PHONE_TYPE_GSM;

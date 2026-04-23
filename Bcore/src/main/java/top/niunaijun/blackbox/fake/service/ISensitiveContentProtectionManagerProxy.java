@@ -13,6 +13,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * SensitiveContentProtectionManager 代理：
+ * - 替换敏感内容保护服务；修正入参包名到宿主，避免校验失败；
+ * - 服务不存在时跳过注入以兼容不同系统版本。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class ISensitiveContentProtectionManagerProxy extends BinderInvocationStub {
     public static final String TAG = "ISensitiveContentProtection";
 

@@ -25,6 +25,13 @@ import top.niunaijun.blackbox.utils.compat.ActivityCompat;
 import top.niunaijun.blackbox.utils.compat.ActivityManagerCompat;
 import top.niunaijun.blackbox.utils.compat.ContextCompat;
 
+/**
+ * 应用级 Instrumentation：
+ * - 注入到 ActivityThread.mInstrumentation，实现对生命周期和启动流程的接管；
+ * - 在 onCreate 等生命周期中修复 Context/Activity 环境（ContextCompat/ActivityCompat）；
+ * - 检查并安装 HCallback 与 IActivityClient 相关代理，保障消息循环与客户端回调；
+ * - newActivity 与 callActivityOnCreate 等方法保持与系统一致，必要时回落到原始 Instrumentation。
+ */
 public final class AppInstrumentation extends BaseInstrumentationDelegate implements IInjectHook {
 
     private static final String TAG = AppInstrumentation.class.getSimpleName();

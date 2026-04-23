@@ -14,6 +14,12 @@ import top.niunaijun.blackbox.fake.hook.MethodHook;
 import top.niunaijun.blackbox.fake.hook.ProxyMethods;
 
 
+/**
+ * AccessibilityManager 代理：
+ * - 替换辅助功能服务，将调用末尾的 userId 统一替换为宿主实际 userId；
+ * - 保障跨用户/虚拟环境下的辅助功能事件与连接正常。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IAccessibilityManagerProxy extends BinderInvocationStub {
 
     public IAccessibilityManagerProxy() {

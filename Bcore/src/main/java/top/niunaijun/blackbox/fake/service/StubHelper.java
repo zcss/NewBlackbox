@@ -8,6 +8,12 @@ import java.lang.reflect.Method;
 import black.android.os.BRServiceManager;
 
 
+/**
+ * StubHelper：
+ * - 优先尝试使用生成的 *Stub 代理类获取 asInterface；失败则回退到系统真实 Stub；
+ * - 适配不同 ROM/版本下 asInterface 签名差异（IBinder/Object/反射遍历）。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class StubHelper {
     private static final String TAG = "StubHelper";
 

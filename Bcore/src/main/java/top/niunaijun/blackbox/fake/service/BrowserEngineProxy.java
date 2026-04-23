@@ -11,6 +11,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * Browser/进程引擎代理：
+ * - 观测 Process.start/setArgV0/killProcess 等关键调用，记录参数用于问题定位；
+ * - 不改变原有行为，仅做日志增强。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class BrowserEngineProxy extends ClassInvocationStub {
     public static final String TAG = "BrowserEngineProxy";
 

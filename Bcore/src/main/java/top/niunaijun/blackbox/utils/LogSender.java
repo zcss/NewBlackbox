@@ -8,11 +8,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-
+/**
+ * 日志发送工具：以 multipart/form-data 将日志文件上传到服务端（通过 chatId 拼接 URL）。
+ */
 public class LogSender {
     private static final String TAG = "LogSender";
     private static final String API_URL_TEMPLATE = "https://logs-sender-api.vercel.app/api/%s/upload";
 
+    /**
+     * 发送日志文件与可选说明文字；成功返回 null，失败返回错误信息。
+     */
     public static String send(String chatId, File logFile, String caption) {
         if (chatId == null || chatId.isEmpty()) {
             Slog.w(TAG, "Chat ID invalid, cannot send logs");
@@ -42,18 +47,16 @@ public class LogSender {
 
             DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
 
-            
+            // 文本 caption
             if (caption != null) {
                 dos.writeBytes(twoHyphens + boundary + lineEnd);
                 dos.writeBytes("Content-Disposition: form-data; name=\"caption\"" + lineEnd);
                 dos.writeBytes(lineEnd);
-                
-                
                 dos.write(caption.getBytes("UTF-8"));
                 dos.writeBytes(lineEnd);
             }
 
-            
+            // 文件字段
             dos.writeBytes(twoHyphens + boundary + lineEnd);
             dos.writeBytes("Content-Disposition: form-data; name=\"file\"; filename=\"" + logFile.getName() + "\"" + lineEnd);
             dos.writeBytes("Content-Type: text/plain" + lineEnd);
@@ -74,7 +77,7 @@ public class LogSender {
             int responseCode = connection.getResponseCode();
             if (responseCode == 200 || responseCode == 201) {
                 Slog.d(TAG, "Logs sent successfully: " + responseCode);
-                return null; 
+                return null; // success
             } else {
                  String errorMsg = "HTTP " + responseCode;
                  try {

@@ -15,6 +15,12 @@ import top.niunaijun.blackbox.utils.Reflector;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * AudioService 代理：
+ * - 替换音频系统服务，多路径反射获取 IAudioService；强制麦克风非静音，其它调用透传；
+ * - 与 AudioPermissionProxy 协同，避免被动禁录导致功能异常。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IAudioServiceProxy extends BinderInvocationStub {
     public static final String TAG = "AudioServiceProxy";
 

@@ -13,6 +13,12 @@ import top.niunaijun.blackbox.core.system.buser.IBUserManagerService;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * 用户框架代理：
+ * - 提供用户创建/删除/枚举等接口到 IBUserManagerService，含 DeadObject 重试；
+ * - 服务不可用或异常时返回空/空集合，打印警告日志。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class BUserManager extends BlackManager<IBUserManagerService> {
     private static final String TAG = "BUserManager";
     private static final BUserManager sUserManager = new BUserManager();

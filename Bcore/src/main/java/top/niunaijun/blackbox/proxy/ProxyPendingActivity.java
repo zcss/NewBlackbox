@@ -12,6 +12,9 @@ import top.niunaijun.blackbox.proxy.record.ProxyPendingRecord;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * 宿主侧代理PendingActivity：承接延迟启动记录，补齐 FLAG_ACTIVITY_NEW_TASK 后转发目标。
+ */
 public class ProxyPendingActivity extends Activity {
     public static final String TAG = "ProxyPendingActivity";
 

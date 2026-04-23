@@ -13,6 +13,12 @@ import black.android.app.BRIServiceConnectionO;
 import top.niunaijun.blackbox.utils.compat.BuildCompat;
 
 
+/**
+ * ServiceConnection 代理：
+ * - 包装系统 IServiceConnection，统一回调的 ComponentName 为目标组件，避免被替换影响；
+ * - 适配 O 及以下 connected 签名差异；
+ * - 维护 IBinder→Delegate 映射并处理死亡回调，清理缓存。
+ */
 public class ServiceConnectionDelegate extends IServiceConnection.Stub {
     private static final Map<IBinder, ServiceConnectionDelegate> sServiceConnectDelegate = new HashMap<>();
     private final IServiceConnection mConn;

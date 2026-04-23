@@ -10,6 +10,12 @@ import top.niunaijun.blackbox.fake.hook.ClassInvocationStub;
 import top.niunaijun.blackbox.utils.compat.ContextCompat;
 
 
+/**
+ * SystemProviderStub：
+ * - 包装系统级 Provider，修正 AttributionSource/UID，非系统 authority 时替换为宿主包名；
+ * - 保持系统 Provider 行为稳定，避免 UID 校验问题。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class SystemProviderStub extends ClassInvocationStub implements BContentProvider {
     private IInterface mBase;
 

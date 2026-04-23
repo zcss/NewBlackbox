@@ -17,6 +17,12 @@ import top.niunaijun.blackbox.utils.Slog;
 import top.niunaijun.blackbox.app.BActivityThread;
 
 
+/**
+ * Google AccountManager 代理：
+ * - 通过宿主 Context 获取 AccountManager；当无真实账户时返回构造的 mock Google 账户；
+ * - 常见读取失败场景返回占位数据/Token，保障依赖账号的功能不崩溃。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class GoogleAccountManagerProxy extends ClassInvocationStub {
     public static final String TAG = "GoogleAccountManagerProxy";
 

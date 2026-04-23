@@ -5,7 +5,9 @@ import android.util.Log;
 
 import java.lang.reflect.Field;
 
-
+/**
+ * QQ 工具：通过反射提升 QLog 的日志级别，便于调试。
+ */
 public class QQUtils {
     public static void hackLog(Context context) {
         try {

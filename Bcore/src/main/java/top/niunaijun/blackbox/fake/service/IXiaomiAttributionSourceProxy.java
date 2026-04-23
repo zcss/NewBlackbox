@@ -10,6 +10,12 @@ import top.niunaijun.blackbox.utils.AttributionSourceUtils;
 import top.niunaijun.blackbox.util.XiaomiDeviceDetector;
 
 
+/**
+ * 小米 AttributionSource 代理：
+ * - 修正/构造/反序列化时的 AttributionSource UID/包名，绕过 enforce* 校验，避免 UID 不一致崩溃；
+ * - 仅增强兼容性，正常路径透传。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IXiaomiAttributionSourceProxy extends ClassInvocationStub {
     public static final String TAG = "IXiaomiAttributionSourceProxy";
 

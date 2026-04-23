@@ -94,6 +94,12 @@ import top.niunaijun.blackbox.fake.service.WorkManagerProxy;
 
 
 
+/**
+ * Hook 管理器：
+ * - 统一注册/注入所有 IInjectHook 实例（按 Android 版本差异增量注入）；
+ * - 提供 checkEnv/checkAll 自检与自动重注入能力；
+ * - 具备关键 Hook 的就绪性检测与一键重建入口。
+ */
 public class HookManager {
     public static final String TAG = "HookManager";
 

@@ -23,44 +23,43 @@ import java.util.zip.ZipInputStream;
 import top.niunaijun.blackbox.BlackBoxCore;
 import top.niunaijun.blackbox.app.BActivityThread;
 
-
+/**
+ * DEX 文件恢复：
+ * - 维护多策略（替代 APK、宿主 APK、系统 APK、DEX 提取、备份恢复），按优先级尝试恢复损坏 APK；
+ * - recoverDexFile 提供统一入口与缓存；
+ * - isValidApkFile 做基本 APK 有效性校验（存在 classes.dex 且大于阈值）。
+ */
 public class DexFileRecovery {
     private static final String TAG = "DexFileRecovery";
-    
-    
+
     private static final Map<String, RecoveryResult> sRecoveryCache = new HashMap<>();
-    
-    
     private static final List<RecoveryStrategy> sRecoveryStrategies = new ArrayList<>();
-    
-    
     private static final int MAX_RECOVERY_ATTEMPTS = 3;
-    
+
     static {
         initializeRecoveryStrategies();
     }
-    
-    
+
     public static class RecoveryResult {
         public final String recoveredFilePath;
         public final String recoveryMethod;
         public final boolean success;
         public final String errorMessage;
-        
+
         public RecoveryResult(String recoveredFilePath, String recoveryMethod) {
             this.recoveredFilePath = recoveredFilePath;
             this.recoveryMethod = recoveryMethod;
             this.success = recoveredFilePath != null;
             this.errorMessage = null;
         }
-        
+
         public RecoveryResult(String errorMessage) {
             this.recoveredFilePath = null;
             this.recoveryMethod = null;
             this.success = false;
             this.errorMessage = errorMessage;
         }
-        
+
         @Override
         public String toString() {
             if (success) {
@@ -70,49 +69,38 @@ public class DexFileRecovery {
             }
         }
     }
-    
-    
+
     public interface RecoveryStrategy {
         String getName();
         RecoveryResult attemptRecovery(String corruptedFilePath);
-        int getPriority(); 
+        int getPriority(); // 越大优先级越高
     }
-    
-    
+
     private static void initializeRecoveryStrategies() {
         sRecoveryStrategies.add(new AlternativeApkStrategy());
         sRecoveryStrategies.add(new HostAppApkStrategy());
         sRecoveryStrategies.add(new SystemApkStrategy());
         sRecoveryStrategies.add(new DexExtractionStrategy());
         sRecoveryStrategies.add(new BackupRestoreStrategy());
-        
-        
         sRecoveryStrategies.sort((a, b) -> Integer.compare(b.getPriority(), a.getPriority()));
-        
         Slog.d(TAG, "Initialized " + sRecoveryStrategies.size() + " recovery strategies");
     }
-    
-    
+
+    /** 遍历策略进行恢复（带缓存），优先返回第一条成功结果。 */
     public static RecoveryResult recoverDexFile(String corruptedFilePath) {
         if (corruptedFilePath == null) {
             return new RecoveryResult("Corrupted file path is null");
         }
-        
-        
         if (sRecoveryCache.containsKey(corruptedFilePath)) {
             RecoveryResult cached = sRecoveryCache.get(corruptedFilePath);
             Slog.d(TAG, "Using cached recovery result for " + corruptedFilePath + ": " + cached);
             return cached;
         }
-        
         Slog.w(TAG, "Attempting to recover corrupted DEX file: " + corruptedFilePath);
-        
-        
         for (RecoveryStrategy strategy : sRecoveryStrategies) {
             try {
                 Slog.d(TAG, "Trying recovery strategy: " + strategy.getName());
                 RecoveryResult result = strategy.attemptRecovery(corruptedFilePath);
-                
                 if (result.success) {
                     Slog.d(TAG, "Recovery successful via " + strategy.getName() + ": " + result.recoveredFilePath);
                     sRecoveryCache.put(corruptedFilePath, result);
@@ -124,40 +112,28 @@ public class DexFileRecovery {
                 Slog.w(TAG, "Recovery strategy " + strategy.getName() + " threw exception: " + e.getMessage());
             }
         }
-        
-        
         RecoveryResult failure = new RecoveryResult("All recovery strategies failed for " + corruptedFilePath);
         sRecoveryCache.put(corruptedFilePath, failure);
         return failure;
     }
-    
-    
+
     private static class AlternativeApkStrategy implements RecoveryStrategy {
         @Override
-        public String getName() {
-            return "Alternative APK";
-        }
-        
+        public String getName() { return "Alternative APK"; }
         @Override
-        public int getPriority() {
-            return 100; 
-        }
-        
+        public int getPriority() { return 100; }
         @Override
         public RecoveryResult attemptRecovery(String corruptedFilePath) {
             try {
                 File corruptedFile = new File(corruptedFilePath);
                 File parent = corruptedFile.getParentFile();
-                
                 if (parent != null && parent.exists()) {
                     File[] files = parent.listFiles();
                     if (files != null) {
                         for (File file : files) {
-                            if (file.getName().endsWith(".apk") && 
-                                file.length() > 1000000 && 
+                            if (file.getName().endsWith(".apk") &&
+                                file.length() > 1000000 &&
                                 !file.getAbsolutePath().equals(corruptedFilePath)) {
-                                
-                                
                                 if (isValidApkFile(file)) {
                                     Slog.d(TAG, "Found valid alternative APK: " + file.getAbsolutePath());
                                     return new RecoveryResult(file.getAbsolutePath(), getName());
@@ -166,26 +142,18 @@ public class DexFileRecovery {
                         }
                     }
                 }
-                
                 return new RecoveryResult("No valid alternative APK files found");
             } catch (Exception e) {
                 return new RecoveryResult("Error in alternative APK strategy: " + e.getMessage());
             }
         }
     }
-    
-    
+
     private static class HostAppApkStrategy implements RecoveryStrategy {
         @Override
-        public String getName() {
-            return "Host App APK";
-        }
-        
+        public String getName() { return "Host App APK"; }
         @Override
-        public int getPriority() {
-            return 80;
-        }
-        
+        public int getPriority() { return 80; }
         @Override
         public RecoveryResult attemptRecovery(String corruptedFilePath) {
             try {
@@ -200,37 +168,22 @@ public class DexFileRecovery {
                         }
                     }
                 }
-                
                 return new RecoveryResult("Host app APK not available or invalid");
             } catch (Exception e) {
                 return new RecoveryResult("Error in host app APK strategy: " + e.getMessage());
             }
         }
     }
-    
-    
+
     private static class SystemApkStrategy implements RecoveryStrategy {
         @Override
-        public String getName() {
-            return "System APK";
-        }
-        
+        public String getName() { return "System APK"; }
         @Override
-        public int getPriority() {
-            return 60;
-        }
-        
+        public int getPriority() { return 60; }
         @Override
         public RecoveryResult attemptRecovery(String corruptedFilePath) {
             try {
-                
-                String[] systemPaths = {
-                    "/system/app",
-                    "/system/priv-app",
-                    "/vendor/app",
-                    "/product/app"
-                };
-                
+                String[] systemPaths = {"/system/app", "/system/priv-app", "/vendor/app", "/product/app"};
                 for (String systemPath : systemPaths) {
                     File systemDir = new File(systemPath);
                     if (systemDir.exists() && systemDir.isDirectory()) {
@@ -251,26 +204,18 @@ public class DexFileRecovery {
                         }
                     }
                 }
-                
                 return new RecoveryResult("No valid system APK files found");
             } catch (Exception e) {
                 return new RecoveryResult("Error in system APK strategy: " + e.getMessage());
             }
         }
     }
-    
-    
+
     private static class DexExtractionStrategy implements RecoveryStrategy {
         @Override
-        public String getName() {
-            return "DEX Extraction";
-        }
-        
+        public String getName() { return "DEX Extraction"; }
         @Override
-        public int getPriority() {
-            return 40;
-        }
-        
+        public int getPriority() { return 40; }
         @Override
         public RecoveryResult attemptRecovery(String corruptedFilePath) {
             try {
@@ -278,95 +223,69 @@ public class DexFileRecovery {
                 if (!corruptedFile.exists() || !corruptedFile.getName().endsWith(".apk")) {
                     return new RecoveryResult("Not an APK file or file doesn't exist");
                 }
-                
-                
                 String extractedDexPath = extractDexFromApk(corruptedFile);
                 if (extractedDexPath != null) {
                     Slog.d(TAG, "Successfully extracted DEX from corrupted APK: " + extractedDexPath);
                     return new RecoveryResult(extractedDexPath, getName());
                 }
-                
                 return new RecoveryResult("Failed to extract DEX from corrupted APK");
             } catch (Exception e) {
                 return new RecoveryResult("Error in DEX extraction strategy: " + e.getMessage());
             }
         }
-        
         private String extractDexFromApk(File apkFile) {
             try (ZipFile zipFile = new ZipFile(apkFile)) {
                 ZipEntry dexEntry = zipFile.getEntry("classes.dex");
                 if (dexEntry != null) {
-                    
                     File extractDir = new File(BlackBoxCore.getContext().getCacheDir(), "dex_recovery");
-                    if (!extractDir.exists()) {
-                        extractDir.mkdirs();
-                    }
-                    
-                    
+                    if (!extractDir.exists()) { extractDir.mkdirs(); }
                     File extractedDex = new File(extractDir, "classes_" + System.currentTimeMillis() + ".dex");
                     try (InputStream input = zipFile.getInputStream(dexEntry);
                          FileOutputStream output = new FileOutputStream(extractedDex)) {
-                        
                         byte[] buffer = new byte[8192];
                         int bytesRead;
                         while ((bytesRead = input.read(buffer)) != -1) {
                             output.write(buffer, 0, bytesRead);
                         }
                     }
-                    
                     Slog.d(TAG, "Extracted DEX to: " + extractedDex.getAbsolutePath());
                     return extractedDex.getAbsolutePath();
                 }
             } catch (Exception e) {
                 Slog.w(TAG, "Failed to extract DEX from APK: " + e.getMessage());
             }
-            
             return null;
         }
     }
-    
-    
+
     private static class BackupRestoreStrategy implements RecoveryStrategy {
         @Override
-        public String getName() {
-            return "Backup Restore";
-        }
-        
+        public String getName() { return "Backup Restore"; }
         @Override
-        public int getPriority() {
-            return 20; 
-        }
-        
+        public int getPriority() { return 20; }
         @Override
         public RecoveryResult attemptRecovery(String corruptedFilePath) {
             try {
-                
                 String backupPath = findBackupFile(corruptedFilePath);
                 if (backupPath != null && isValidApkFile(new File(backupPath))) {
                     Slog.d(TAG, "Found valid backup file: " + backupPath);
                     return new RecoveryResult(backupPath, getName());
                 }
-                
                 return new RecoveryResult("No valid backup files found");
             } catch (Exception e) {
                 return new RecoveryResult("Error in backup restore strategy: " + e.getMessage());
             }
         }
-        
         private String findBackupFile(String originalPath) {
             try {
                 File original = new File(originalPath);
                 File parent = original.getParentFile();
-                String baseName = original.getName().replaceFirst("[.][^.]+$", ""); 
-                
+                String baseName = original.getName().replaceFirst("[.][^.]+$", "");
                 if (parent != null && parent.exists()) {
-                    File[] files = parent.listFiles((dir, name) -> 
-                        name.startsWith(baseName) && 
-                        (name.endsWith(".bak") || name.endsWith(".backup") || name.endsWith(".old"))
+                    File[] files = parent.listFiles((dir, name) ->
+                        name.startsWith(baseName) && (name.endsWith(".bak") || name.endsWith(".backup") || name.endsWith(".old"))
                     );
-                    
                     if (files != null && files.length > 0) {
-                        
                         File mostRecent = files[0];
                         for (File file : files) {
                             if (file.lastModified() > mostRecent.lastModified()) {
@@ -379,24 +298,19 @@ public class DexFileRecovery {
             } catch (Exception e) {
                 Slog.w(TAG, "Error finding backup file: " + e.getMessage());
             }
-            
             return null;
         }
     }
-    
-    
+
+    /** 基本 APK 有效性校验：长度与 classes.dex 存在性。 */
     public static boolean isValidApkFile(File apkFile) {
         if (apkFile == null || !apkFile.exists()) {
             return false;
         }
-        
         try {
-            
-            if (apkFile.length() < 1000000) {
+            if (apkFile.length() < 1000000) { // 最小阈值
                 return false;
             }
-            
-            
             try (ZipFile zipFile = new ZipFile(apkFile)) {
                 ZipEntry dexEntry = zipFile.getEntry("classes.dex");
                 return dexEntry != null && dexEntry.getSize() > 0;
@@ -409,18 +323,17 @@ public class DexFileRecovery {
             return false;
         }
     }
-    
-    
+
+    /** 清空恢复结果缓存。 */
     public static void clearCache() {
         sRecoveryCache.clear();
         Slog.d(TAG, "Recovery cache cleared");
     }
-    
-    
+
+    /** 恢复统计摘要。 */
     public static String getRecoveryStats() {
         int successful = 0;
         int failed = 0;
-        
         for (RecoveryResult result : sRecoveryCache.values()) {
             if (result.success) {
                 successful++;
@@ -428,14 +341,12 @@ public class DexFileRecovery {
                 failed++;
             }
         }
-        
-        return "Recovery Stats - Successful: " + successful + ", Failed: " + failed + 
+        return "Recovery Stats - Successful: " + successful + ", Failed: " + failed +
                ", Total Attempts: " + sRecoveryCache.size();
     }
-    
-    
+
+    /** 强制重新恢复：清缓存后重试。 */
     public static RecoveryResult forceRecovery(String filePath) {
-        
         sRecoveryCache.remove(filePath);
         return recoverDexFile(filePath);
     }

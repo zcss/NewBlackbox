@@ -10,6 +10,9 @@ import top.niunaijun.blackboxa.R;
 import top.niunaijun.blackboxa.bean.GmsBean;
 import top.niunaijun.blackboxa.databinding.ItemGmsBinding;
 
+/**
+ * GMS 用户列表适配器：展示每个用户的安装状态并触发切换。
+ */
 public class GmsAdapter extends RVHolderFactory {
     @Override
     public RVHolder<?> createViewHolder(ViewGroup parent, int viewType, Object item) {

@@ -13,6 +13,9 @@ import top.niunaijun.blackbox.app.dispatcher.AppServiceDispatcher;
 import top.niunaijun.blackbox.utils.compat.BuildCompat;
 
 
+/**
+ * 宿主侧代理Service：将生命周期回调转发给 AppServiceDispatcher，承载多进程占位类。
+ */
 public class ProxyService extends Service {
     public static final String TAG = "StubService";
 

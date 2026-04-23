@@ -8,7 +8,10 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-
+/**
+ * 反射工具：提供链式 API 定位并操作构造器、字段、方法。
+ * 支持静默模式 QuietReflector，在反射失败时记录异常而不抛出，便于兼容不同系统版本。
+ */
 public class Reflector {
     public static final String LOG_TAG = "Reflector";
 
@@ -18,15 +21,17 @@ public class Reflector {
     protected Field mField;
     protected Method mMethod;
 
-
+    /** 通过类名创建反射器。 */
     public static Reflector on(String name) throws Exception {
         return on(name, true, Reflector.class.getClassLoader());
     }
 
+    /** 通过类名创建反射器，可控制是否初始化类。 */
     public static Reflector on(String name, boolean initialize) throws Exception {
         return on(name, initialize, Reflector.class.getClassLoader());
     }
 
+    /** 通过类名与类加载器创建反射器。 */
     public static Reflector on(String name, boolean initialize, ClassLoader loader) throws Exception {
         try {
             return on(Class.forName(name, initialize, loader));
@@ -35,12 +40,14 @@ public class Reflector {
         }
     }
 
+    /** 通过类型创建反射器。 */
     public static Reflector on(Class<?> type) {
         Reflector reflector = new Reflector();
         reflector.mType = type;
         return reflector;
     }
 
+    /** 基于实例创建反射器并绑定调用者。 */
     public static Reflector with(Object caller) throws Exception {
         return on(caller.getClass()).bind(caller);
     }
@@ -49,6 +56,7 @@ public class Reflector {
 
     }
 
+    /** 定位构造器并准备 newInstance。 */
     public Reflector constructor(Class<?>... parameterTypes) throws Exception {
         try {
             mConstructor = mType.getDeclaredConstructor(parameterTypes);
@@ -61,6 +69,7 @@ public class Reflector {
         }
     }
 
+    /** 调用已定位构造器创建实例。 */
     @SuppressWarnings("unchecked")
     public <R> R newInstance(Object... initargs) throws Exception {
         if (mConstructor == null) {
@@ -92,16 +101,19 @@ public class Reflector {
         checked(caller);
     }
 
+    /** 绑定调用者（用于非静态字段/方法）。 */
     public Reflector bind(Object caller) throws Exception {
         mCaller = checked(caller);
         return this;
     }
 
+    /** 取消绑定调用者。 */
     public Reflector unbind() {
         mCaller = null;
         return this;
     }
 
+    /** 定位字段。 */
     public Reflector field(String name) throws Exception {
         try {
             mField = findField(name);
@@ -122,18 +134,20 @@ public class Reflector {
                 try {
                     return cls.getDeclaredField(name);
                 } catch (NoSuchFieldException ex) {
-                    
+
                 }
             }
             throw e;
         }
     }
 
+    /** 读取已定位字段（使用已绑定调用者）。 */
     @SuppressWarnings("unchecked")
     public <R> R get() throws Exception {
         return get(mCaller);
     }
 
+    /** 读取字段值。 */
     @SuppressWarnings("unchecked")
     public <R> R get(Object caller) throws Exception {
         check(caller, mField, "Field");
@@ -144,10 +158,12 @@ public class Reflector {
         }
     }
 
+    /** 设置已定位字段（使用已绑定调用者）。 */
     public Reflector set(Object value) throws Exception {
         return set(mCaller, value);
     }
 
+    /** 设置字段值。 */
     public Reflector set(Object caller, Object value) throws Exception {
         check(caller, mField, "Field");
         try {
@@ -158,6 +174,7 @@ public class Reflector {
         }
     }
 
+    /** 定位方法。 */
     public Reflector method(String name, Class<?>... parameterTypes) throws Exception {
         try {
             mMethod = findMethod(name, parameterTypes);
@@ -178,17 +195,19 @@ public class Reflector {
                 try {
                     return cls.getDeclaredMethod(name, parameterTypes);
                 } catch (NoSuchMethodException ex) {
-                    
+
                 }
             }
             throw e;
         }
     }
 
+    /** 调用已定位方法（使用已绑定调用者）。 */
     public <R> R call(Object... args) throws Exception {
         return callByCaller(mCaller, args);
     }
 
+    /** 调用方法。 */
     @SuppressWarnings("unchecked")
     public <R> R callByCaller(Object caller, Object... args) throws Exception {
         check(caller, mMethod, "Method");
@@ -201,18 +220,24 @@ public class Reflector {
         }
     }
 
+    /**
+     * 静默反射器：捕获并保存异常到 mIgnored，而非抛出，方便在不同系统/ROM 上做兼容性尝试。
+     */
     public static class QuietReflector extends Reflector {
 
         protected Throwable mIgnored;
 
+        /** 通过类名创建静默反射器。 */
         public static QuietReflector on(String name) {
             return on(name, true, QuietReflector.class.getClassLoader());
         }
 
+        /** 通过类名创建静默反射器，可控制是否初始化类。 */
         public static QuietReflector on(String name, boolean initialize) {
             return on(name, initialize, QuietReflector.class.getClassLoader());
         }
 
+        /** 通过类名与类加载器创建静默反射器。 */
         public static QuietReflector on(String name, boolean initialize, ClassLoader loader) {
             Class<?> cls = null;
             try {
@@ -224,6 +249,7 @@ public class Reflector {
             }
         }
 
+        /** 通过类型创建静默反射器。 */
         public static QuietReflector on(Class<?> type) {
             return on(type, (type == null) ? new Exception("Type was null!") : null);
         }
@@ -235,6 +261,7 @@ public class Reflector {
             return reflector;
         }
 
+        /** 基于实例创建静默反射器并绑定调用者。 */
         public static QuietReflector with(Object caller) {
             if (caller == null) {
                 return on((Class<?>) null);
@@ -246,6 +273,7 @@ public class Reflector {
 
         }
 
+        /** 返回最近一次操作忽略的异常。 */
         public Throwable getIgnored() {
             return mIgnored;
         }
@@ -430,6 +458,9 @@ public class Reflector {
         }
     }
 
+    /**
+     * 按方法名返回首个匹配的方法（当存在重载时不区分参数，取声明顺序中的第一个）。
+     */
     public static Method findMethodByFirstName(Class<?> clazz, String methodName) {
         for (Method declaredMethod : clazz.getDeclaredMethods()) {
             if (methodName.equals(declaredMethod.getName())) {

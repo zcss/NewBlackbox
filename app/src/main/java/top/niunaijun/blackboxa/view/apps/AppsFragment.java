@@ -34,7 +34,7 @@ import top.niunaijun.blackboxa.view.base.LoadingActivity;
 import top.niunaijun.blackboxa.view.main.MainActivity;
 
 /**
- * app列表
+ * 应用列表 Fragment：显示并管理当前用户的应用条目（支持拖拽排序、启动、卸载、清数据、创建快捷方式等）。
  */
 public class AppsFragment extends Fragment {
     private static final String TAG = "AppsFragment";
@@ -45,6 +45,11 @@ public class AppsFragment extends Fragment {
     private FragmentAppsBinding viewBinding;
     private PopupMenu popupMenu;
 
+    /**
+     * 创建指定用户的 AppsFragment。
+     * @param userID 用户 ID
+     * @return AppsFragment 实例
+     */
     public static AppsFragment newInstance(int userID) {
         AppsFragment fragment = new AppsFragment();
         Bundle bundle = new Bundle();
@@ -53,6 +58,7 @@ public class AppsFragment extends Fragment {
         return fragment;
     }
 
+    /** 初始化 ViewModel 与读取 userID 参数。*/
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +73,9 @@ public class AppsFragment extends Fragment {
         }
     }
 
+    /**
+     * 初始化视图与 RecyclerView（包含缓存、预取、拖拽排序、点击/长按行为）。
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -144,6 +153,7 @@ public class AppsFragment extends Fragment {
         }
     }
 
+    /** 绑定数据与观察者。*/
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -154,6 +164,7 @@ public class AppsFragment extends Fragment {
         }
     }
 
+    /** 首次或服务可用后刷新安装应用列表。*/
     @Override
     public void onStart() {
         super.onStart();
@@ -174,6 +185,7 @@ public class AppsFragment extends Fragment {
         }
     }
 
+    /** 截获列表触摸事件：用于点击弹出菜单与滑动隐藏/显示 FAB。*/
     private void interceptTouch() {
         try {
             final Point point = new Point();

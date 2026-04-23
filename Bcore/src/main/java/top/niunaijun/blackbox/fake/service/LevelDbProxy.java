@@ -8,6 +8,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * LevelDB 代理：
+ * - 拦截 open/nativeOpen/get/put/delete，识别 lock/IO error 等常见错误并返回安全默认值；
+ * - 避免 LevelDB 打开/读写异常导致的级联崩溃。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class LevelDbProxy extends ClassInvocationStub {
     public static final String TAG = "LevelDbProxy";
 

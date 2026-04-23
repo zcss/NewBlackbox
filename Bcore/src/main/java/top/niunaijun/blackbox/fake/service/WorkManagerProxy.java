@@ -12,6 +12,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * WorkManager 代理：
+ * - 通过宿主 Context 反射获取实例，拦截 enqueue/cancel/getWorkInfos 等方法，异常时返回安全默认值；
+ * - 主要用于日志观测与在无依赖场景下提供空实现，避免崩溃。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class WorkManagerProxy extends ClassInvocationStub {
     public static final String TAG = "WorkManagerProxy";
 

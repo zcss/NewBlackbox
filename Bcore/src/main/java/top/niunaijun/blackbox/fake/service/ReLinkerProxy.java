@@ -8,6 +8,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * ReLinker 代理：
+ * - 拦截多重 loadLibrary 重载，记录并直接返回以规避 MissingLibraryException；
+ * - 适配三方 ReLinker 在缺失 so 时的兜底行为，避免崩溃。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class ReLinkerProxy extends ClassInvocationStub {
     public static final String TAG = "ReLinkerProxy";
 

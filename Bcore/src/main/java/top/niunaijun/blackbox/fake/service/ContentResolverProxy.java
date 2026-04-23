@@ -11,6 +11,11 @@ import top.niunaijun.blackbox.utils.Slog;
 import top.niunaijun.blackbox.fake.hook.ClassInvocationStub;
 
 
+/**
+ * ContentResolver 代理：
+ * - 基于宿主 Context 的 ContentResolver 进行方法级拦截；
+ * - 对媒体/音频相关 URI 进行放行与记录，其他路径保持透传。
+ */
 public class ContentResolverProxy extends ClassInvocationStub {
     public static final String TAG = "ContentResolverProxy";
 

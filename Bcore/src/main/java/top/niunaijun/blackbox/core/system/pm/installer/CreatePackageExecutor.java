@@ -6,6 +6,9 @@ import top.niunaijun.blackbox.entity.pm.InstallOption;
 import top.niunaijun.blackbox.utils.FileUtils;
 
 
+/**
+ * 包目录阶段：清理旧包目录并创建 data/app 与 lib 目录。
+ */
 public class CreatePackageExecutor implements Executor {
 
     @Override

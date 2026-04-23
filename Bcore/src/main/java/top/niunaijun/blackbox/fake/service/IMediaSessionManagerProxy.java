@@ -12,6 +12,11 @@ import top.niunaijun.blackbox.fake.hook.MethodHook;
 import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 
 
+/**
+ * MediaSessionManager 代理：
+ * - 替换媒体会话服务，创建会话时将包名替换为宿主以通过系统校验；
+ * - 其余调用透传，保证媒体控制兼容性。
+ */
 public class IMediaSessionManagerProxy extends BinderInvocationStub {
 
     public IMediaSessionManagerProxy() {

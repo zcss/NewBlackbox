@@ -12,6 +12,12 @@ import top.niunaijun.blackbox.fake.hook.MethodHook;
 import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 
 
+/**
+ * RestrictionsManager 代理：
+ * - 替换限制管理服务；查询应用限制时统一替换为宿主包名；
+ * - 保证限制读取在虚拟环境中的一致性。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class RestrictionsManagerStub extends BinderInvocationStub {
 
     public RestrictionsManagerStub() {

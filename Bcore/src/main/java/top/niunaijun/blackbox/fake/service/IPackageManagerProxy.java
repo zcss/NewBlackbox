@@ -38,6 +38,14 @@ import top.niunaijun.blackbox.utils.compat.BuildCompat;
 import top.niunaijun.blackbox.utils.compat.ParceledListSliceCompat;
 
 
+/**
+ * PackageManager 代理：
+ * - 代理 BRActivityThread.sPackageManager 并替换至系统上下文；
+ * - 统一解析/查询/权限相关能力来源于 BPackageManager，必要时回落系统；
+ * - 加强音频/存储/通知权限兼容，适配小米/HyperOS 安全策略；
+ * - 部分方法（如 getPackageInfo/installer/图标加载）做安全伪造或兜底。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IPackageManagerProxy extends BinderInvocationStub {
     public static final String TAG = "PackageManagerStub";
 
@@ -74,6 +82,9 @@ public class IPackageManagerProxy extends BinderInvocationStub {
         return false;
     }
 
+    /**
+     * 绑定需拦截的方法：权限相关、图标加载、Splash 主题与小米安全策略等。
+     */
     @Override
     protected void onBindMethod() {
         super.onBindMethod();
@@ -126,6 +137,10 @@ public class IPackageManagerProxy extends BinderInvocationStub {
         }
     }
 
+    /**
+     * getPackageInfo 代理：优先从沙盒获取包信息，必要时对特定包（如 com.android.vending）返回伪造信息，
+     * 并尽可能标记部分权限为授予，提升兼容性。
+     */
     @ProxyMethod("getPackageInfo")
     public static class GetPackageInfo extends MethodHook {
         @Override
@@ -409,6 +424,9 @@ public class IPackageManagerProxy extends BinderInvocationStub {
 
 
     @ProxyMethod("checkPermission")
+    /**
+     * checkPermission 代理（简化）：对音频/存储/通知等权限直接返回 GRANTED。
+     */
     public static class SimpleAudioPermissionHook extends MethodHook {
         @Override
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
@@ -438,6 +456,9 @@ public class IPackageManagerProxy extends BinderInvocationStub {
         }
     }
 
+    /**
+     * checkSelfPermission 代理：对音频/存储/通知/小米相关权限直接放行，提高兼容性。
+     */
     @ProxyMethod("checkSelfPermission")
     public static class CheckSelfPermission extends MethodHook {
         @Override
@@ -596,6 +617,9 @@ public class IPackageManagerProxy extends BinderInvocationStub {
     }
 
     @ProxyMethod("setSplashScreenTheme")
+    /**
+     * setSplashScreenTheme 代理：绕过 UID 检查，对小米/HyperOS 做增强兼容处理。
+     */
     public static class SetSplashScreenTheme extends MethodHook {
         @Override
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {

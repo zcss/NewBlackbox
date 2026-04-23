@@ -4,6 +4,10 @@ import java.lang.reflect.Method;
 
 import top.niunaijun.blackbox.fake.hook.MethodHook;
 
+/**
+ * ValueMethodProxy：将目标方法直接替换为固定返回值（mValue）。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class ValueMethodProxy extends MethodHook {
 
 	Object mValue;

@@ -6,6 +6,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 
+/**
+ * 广播接收派发数据包：包含Intent、目标ActivityInfo与PendingResult。
+ */
 public class ReceiverData implements Parcelable {
     public Intent intent;
     public ActivityInfo activityInfo;

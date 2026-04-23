@@ -10,6 +10,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * MediaRecorder 类级代理：
+ * - 与 MediaRecorderProxy 类似，记录关键流程调用，默认放行；
+ * - 主要用于在不同加载路径下统一日志观测。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class MediaRecorderClassProxy extends ClassInvocationStub {
     public static final String TAG = "MediaRecorderClassProxy";
 

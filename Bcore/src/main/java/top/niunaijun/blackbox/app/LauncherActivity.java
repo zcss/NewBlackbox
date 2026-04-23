@@ -18,6 +18,12 @@ import android.widget.TextView;
 import android.view.animation.OvershootInterpolator;
 
 
+/**
+ * 启动页Activity：承载应用启动过渡动画，负责从宿主触发目标应用的启动。
+ * - 通过 Intent 携带目标包名与 userId
+ * - 展示应用图标与名称并执行简短动画
+ * - 异步调用虚拟 AMS 启动目标 Activity
+ */
 public class LauncherActivity extends Activity {
     public static final String TAG = "SplashScreen";
 
@@ -26,6 +32,11 @@ public class LauncherActivity extends Activity {
     public static final String KEY_USER_ID = "launch_user_id";
     private boolean isRunning = false;
 
+    /**
+     * 启动入口：由宿主调用，拉起过渡页并透传真实要启动的 Intent。
+     * @param intent 目标应用的启动 Intent（如 LAUNCHER）
+     * @param userId 虚拟用户ID
+     */
     public static void launch(Intent intent, int userId) {
         try {
             Intent splash = new Intent();
@@ -43,6 +54,9 @@ public class LauncherActivity extends Activity {
     }
 
     @Override
+    /**
+     * 创建过渡页：解析传入参数，拉取应用信息并展示动画，随后异步启动目标 Activity。
+     */
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         try {
             super.onCreate(savedInstanceState);
@@ -131,6 +145,9 @@ public class LauncherActivity extends Activity {
     }
 
     
+    /**
+     * 获取包信息（带兜底）：多次尝试获取 PackageInfo，失败时用 ApplicationInfo 构造最小信息。
+     */
     private PackageInfo getPackageInfoWithFallback(String packageName, int userId) {
         try {
             
@@ -173,6 +190,9 @@ public class LauncherActivity extends Activity {
     }
 
     
+    /**
+     * 异步启动应用：避免阻塞UI线程，短暂延时后调用 BActivityManager 启动目标。
+     */
     private void launchAppAsync(final Intent launchIntent, final int userId) {
         new Thread(() -> {
             try {
@@ -202,12 +222,14 @@ public class LauncherActivity extends Activity {
     }
 
     @Override
+    /** 标记进入后台，避免返回栈停留 */
     protected void onPause() {
         super.onPause();
         isRunning = true;
     }
 
     @Override
+    /** 从后台回到前台时若已启动目标则关闭自身 */
     protected void onResume() {
         super.onResume();
         if (isRunning) {

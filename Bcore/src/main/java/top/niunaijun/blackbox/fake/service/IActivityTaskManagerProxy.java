@@ -15,6 +15,12 @@ import top.niunaijun.blackbox.fake.hook.ScanClass;
 import top.niunaijun.blackbox.utils.compat.TaskDescriptionCompat;
 
 
+/**
+ * ActivityTaskManager 代理：
+ * - 替换系统 activity_task 服务与单例，确保进程内调用走代理；
+ * - 修正 TaskDescription 兼容项，避免跨版本字段缺失导致异常；
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 @ScanClass(ActivityManagerCommonProxy.class)
 public class IActivityTaskManagerProxy extends BinderInvocationStub {
     public static final String TAG = "ActivityTaskManager";

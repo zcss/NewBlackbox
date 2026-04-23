@@ -14,6 +14,11 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * WebViewFactory 代理：
+ * - 查询提供方失败则回退系统默认（类、包名、ClassLoader、包信息等）；
+ * - 强制报告支持 WebView，缓解不同 ROM/通道下的工厂差异。
+ */
 public class WebViewFactoryProxy extends ClassInvocationStub {
     public static final String TAG = "WebViewFactoryProxy";
 

@@ -10,6 +10,9 @@ import top.niunaijun.blackbox.core.system.ProcessRecord;
 
 
 
+/**
+ * Activity 记录：承载Intent/ActivityInfo/token/task等信息，用于任务栈管理与回调传递。
+ */
 public class ActivityRecord extends Binder {
     public TaskRecord task;
     public IBinder token;

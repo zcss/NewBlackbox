@@ -7,133 +7,104 @@ import android.app.Application;
 
 import top.niunaijun.blackbox.BlackBoxCore;
 
-
+/**
+ * 简易崩溃保护：安装全局异常处理并启用 ContextWrapper 防护，针对常见 NullContext/GMS/WebView 等崩溃做兜底。
+ */
 public class SimpleCrashFix {
     private static final String TAG = "SimpleCrashFix";
     private static boolean sIsInstalled = false;
 
-    
     public static void installSimpleFix() {
         if (sIsInstalled) {
             Slog.d(TAG, "Simple crash fix already installed");
             return;
         }
-        
         try {
             Slog.d(TAG, "Installing essential crash fix...");
-            
-            
             installGlobalExceptionHandler();
-            
-            
             installContextWrapperHook();
-            
             sIsInstalled = true;
             Slog.d(TAG, "Essential crash fix installed successfully");
         } catch (Exception e) {
             Slog.e(TAG, "Failed to install essential crash fix: " + e.getMessage(), e);
         }
     }
-    
-    
+
     private static void installGlobalExceptionHandler() {
         try {
-            
             Thread.UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
-            
             Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
                 @Override
                 public void uncaughtException(Thread thread, Throwable throwable) {
-                    
                     if (isNullContextCrash(throwable)) {
                         Slog.w(TAG, "Caught null context crash, preventing crash: " + throwable.getMessage());
                         BlackBoxCore.get().sendLogs("CRASH DETECTED (Caught/NullContext): " + throwable.getMessage(), true);
-                        return; 
+                        return; // swallow
                     }
-
-                    
                     if (isGooglePlayServicesCrash(throwable)) {
                         Slog.w(TAG, "Caught Google Play Services crash, preventing crash: " + throwable.getMessage());
                         BlackBoxCore.get().sendLogs("CRASH DETECTED (Caught/GMS): " + throwable.getMessage(), true);
-                        return; 
+                        return;
                     }
-
-                    
                     if (isWebViewCrash(throwable)) {
                         Slog.w(TAG, "Caught WebView crash, preventing crash: " + throwable.getMessage());
                         BlackBoxCore.get().sendLogs("CRASH DETECTED (Caught/WebView): " + throwable.getMessage(), true);
-                        return; 
+                        return;
                     }
-
-                    
                     if (isAttributionSourceCrash(throwable)) {
                         Slog.w(TAG, "Caught AttributionSource crash, preventing crash: " + throwable.getMessage());
                         BlackBoxCore.get().sendLogs("CRASH DETECTED (Caught/Attribution): " + throwable.getMessage(), true);
-                        return; 
+                        return;
                     }
-
-                    
                     if (isSocialMediaAppCrash(throwable)) {
                         Slog.w(TAG, "Caught social media app crash, preventing crash: " + throwable.getMessage());
                         BlackBoxCore.get().sendLogs("CRASH DETECTED (Caught/SocialMedia): " + throwable.getMessage(), true);
-                        return; 
+                        return;
                     }
-
-                    
                     Slog.e(TAG, "Fatal crash detected, attempting to report before death...");
                     try {
                          BlackBoxCore.get().sendLogs("FATAL CRASH (Uncaught): " + throwable.getMessage(), false);
                     } catch (Throwable e) {
                          Slog.e(TAG, "Failed to report fatal crash: " + e.getMessage());
                     }
-
-                    
                     if (currentHandler != null) {
                         currentHandler.uncaughtException(thread, throwable);
                     }
                 }
             });
-            
             Slog.d(TAG, "Global exception handler installed successfully");
         } catch (Exception e) {
             Slog.e(TAG, "Failed to install global exception handler: " + e.getMessage(), e);
         }
     }
-    
-    
+
     private static void installContextWrapperHook() {
         try {
-            
             ContextWrapperHook.installHook();
             Slog.d(TAG, "Context wrapper hook installed");
         } catch (Exception e) {
             Slog.e(TAG, "Failed to install context wrapper hook: " + e.getMessage(), e);
         }
     }
-    
-    
+
     private static boolean isNullContextCrash(Throwable throwable) {
         if (throwable == null) {
             return false;
         }
-        
         String message = throwable.getMessage();
         if (message != null) {
-            return message.contains("Context") || 
+            return message.contains("Context") ||
                    message.contains("context") ||
                    message.contains("getResources") ||
                    message.contains("getPackageManager") ||
                    message.contains("getClassLoader");
         }
-        
-        
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         if (stackTrace != null) {
             for (StackTraceElement element : stackTrace) {
                 String className = element.getClassName();
                 String methodName = element.getMethodName();
-                
-                if (className.contains("Context") || 
+                if (className.contains("Context") ||
                     className.contains("ContextWrapper") ||
                     methodName.contains("getResources") ||
                     methodName.contains("getPackageManager") ||
@@ -142,16 +113,13 @@ public class SimpleCrashFix {
                 }
             }
         }
-        
         return false;
     }
-    
-    
+
     private static boolean isGooglePlayServicesCrash(Throwable throwable) {
         if (throwable == null) {
             return false;
         }
-        
         String message = throwable.getMessage();
         if (message != null) {
             return message.contains("Google Play Services") ||
@@ -159,8 +127,6 @@ public class SimpleCrashFix {
                    message.contains("GoogleApiAvailability") ||
                    message.contains("com.google.android.gms");
         }
-        
-        
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         if (stackTrace != null) {
             for (StackTraceElement element : stackTrace) {
@@ -172,16 +138,13 @@ public class SimpleCrashFix {
                 }
             }
         }
-        
         return false;
     }
 
-    
     private static boolean isWebViewCrash(Throwable throwable) {
         if (throwable == null) {
             return false;
         }
-        
         String message = throwable.getMessage();
         if (message != null) {
             return message.contains("WebView") ||
@@ -190,8 +153,6 @@ public class SimpleCrashFix {
                    message.contains("WebSettings") ||
                    message.contains("data directory");
         }
-        
-        
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         if (stackTrace != null) {
             for (StackTraceElement element : stackTrace) {
@@ -206,16 +167,13 @@ public class SimpleCrashFix {
                 }
             }
         }
-        
         return false;
     }
 
-    
     private static boolean isAttributionSourceCrash(Throwable throwable) {
         if (throwable == null) {
             return false;
         }
-        
         String message = throwable.getMessage();
         if (message != null) {
             return message.contains("AttributionSource") ||
@@ -224,8 +182,6 @@ public class SimpleCrashFix {
                    message.contains("source uid") ||
                    message.contains("UID mismatch");
         }
-        
-        
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         if (stackTrace != null) {
             for (StackTraceElement element : stackTrace) {
@@ -239,16 +195,13 @@ public class SimpleCrashFix {
                 }
             }
         }
-        
         return false;
     }
 
-    
     private static boolean isSocialMediaAppCrash(Throwable throwable) {
         if (throwable == null) {
             return false;
         }
-        
         String message = throwable.getMessage();
         if (message != null) {
             return message.contains("Facebook") ||
@@ -261,8 +214,6 @@ public class SimpleCrashFix {
                    message.contains("YouTube") ||
                    message.contains("LinkedIn");
         }
-        
-        
         StackTraceElement[] stackTrace = throwable.getStackTrace();
         if (stackTrace != null) {
             for (StackTraceElement element : stackTrace) {
@@ -280,7 +231,6 @@ public class SimpleCrashFix {
                 }
             }
         }
-        
         return false;
     }
 }

@@ -45,6 +45,9 @@ import static android.content.pm.PackageManager.GET_ACTIVITIES;
 
 
 @SuppressWarnings({"deprecation", "unchecked"})
+/**
+ * 任务栈管理：解析启动模式/flag，选择新栈或复用栈，生成代理Intent并通过宿主AMS启动。
+ */
 public class ActivityStack {
     public static final String TAG = "ActivityStack";
 

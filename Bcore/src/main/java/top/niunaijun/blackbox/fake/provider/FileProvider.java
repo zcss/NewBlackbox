@@ -31,6 +31,12 @@ import static org.xmlpull.v1.XmlPullParser.END_DOCUMENT;
 import static org.xmlpull.v1.XmlPullParser.START_TAG;
 
 
+/**
+ * 轻量文件共享 Provider（仿 android.support.v4.content.FileProvider）：
+ * - 通过在 AndroidManifest.xml 中配置 META-DATA "android.support.FILE_PROVIDER_PATHS" 声明可访问根目录；
+ * - 将受信任根下的实际 File 映射为 content://<authority>/<tag>/<encoded-path> 形式的 Uri；
+ * - 实现 query/getType/openFile/delete 等基础能力，仅支持只读/读写模式，禁止外部 insert/update。
+ */
 public class FileProvider extends ContentProvider {
     private static final String[] COLUMNS = {
             OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE };

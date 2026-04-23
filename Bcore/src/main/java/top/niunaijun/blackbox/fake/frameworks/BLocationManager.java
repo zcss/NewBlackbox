@@ -13,6 +13,12 @@ import top.niunaijun.blackbox.entity.location.BCell;
 import top.niunaijun.blackbox.entity.location.BLocation;
 
 
+/**
+ * 定位框架代理：
+ * - 管理按用户/包名的虚拟定位策略（关闭/全局/独立），支持小区/邻区/经纬度设置与查询；
+ * - 封装请求/移除监听等接口到 IBLocationManagerService。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class BLocationManager extends BlackManager<IBLocationManagerService> {
     private static final BLocationManager sLocationManager = new BLocationManager();
 

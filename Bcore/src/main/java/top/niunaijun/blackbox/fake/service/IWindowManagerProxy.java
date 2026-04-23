@@ -12,6 +12,11 @@ import top.niunaijun.blackbox.fake.hook.MethodHook;
 import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 
 
+/**
+ * WindowManager 代理：
+ * - 替换系统 window 服务，重置 WindowManagerGlobal.sWindowManagerService 缓存；
+ * - openSession 时包装 IWindowSession 为代理，便于后续窗口操作拦截与兼容。
+ */
 public class IWindowManagerProxy extends BinderInvocationStub {
     public static final String TAG = "WindowManagerStub";
 

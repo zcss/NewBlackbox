@@ -10,6 +10,12 @@ import top.niunaijun.blackbox.utils.AttributionSourceUtils;
 import top.niunaijun.blackbox.util.XiaomiDeviceDetector;
 
 
+/**
+ * 小米/兼容厂商扩展服务代理：
+ * - 针对 MIUI Camera/强制深色/监控线程/降采样/手写扩展等构造调用修正 AttributionSource；
+ * - 常见 NPE/UID 校验异常时返回安全占位或空值，避免 ROM 扩展导致崩溃。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IXiaomiMiuiServicesProxy extends ClassInvocationStub {
     public static final String TAG = "IXiaomiMiuiServicesProxy";
 

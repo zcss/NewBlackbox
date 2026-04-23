@@ -8,6 +8,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 
+/**
+ * 位置数据：承载经纬度/速度/航向等，并可转换为系统Location。
+ */
 public class BLocation implements Parcelable {
 
     private double mLatitude = 0.0;
@@ -89,6 +92,7 @@ public class BLocation implements Parcelable {
                 '}';
     }
 
+    /** 转为系统Location对象，附带卫星数量等额外信息 */
     public Location convert2SystemLocation() {
         Location location = new Location(LocationManager.GPS_PROVIDER);
         location.setLatitude(mLatitude);

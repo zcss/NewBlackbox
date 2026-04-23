@@ -8,6 +8,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * DeviceId 代理：
+ * - 拦截获取/设置/校验/生成/存取设备 ID 的调用；异常或空对象时返回稳定默认值，避免上层崩溃；
+ * - 仅用于兜底与隔离真实设备标识，不改变原有读取路径的正常行为。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class DeviceIdProxy extends ClassInvocationStub {
     public static final String TAG = "DeviceIdProxy";
 

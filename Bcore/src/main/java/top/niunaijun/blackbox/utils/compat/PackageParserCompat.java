@@ -19,13 +19,16 @@ import static android.os.Build.VERSION_CODES.LOLLIPOP_MR1;
 import static android.os.Build.VERSION_CODES.M;
 import static android.os.Build.VERSION_CODES.N;
 
+/**
+ * PackageParser 版本兼容封装：负责在不同 API 上创建/解析/收集证书的统一入口。
+ */
 public class PackageParserCompat {
 
     public static final int[] GIDS = new int[]{};
     private static final int API_LEVEL = Build.VERSION.SDK_INT;
     private static final int myUserId = 0;
 
-
+    /** 根据系统版本创建 PackageParser 实例。 */
     public static PackageParser createParser(File packageFile) {
         if (API_LEVEL >= M) {
             return BRPackageParserMarshmallow.get()._new();
@@ -37,6 +40,7 @@ public class PackageParserCompat {
         return null;
     }
 
+    /** 解析 APK 包，返回 Package 描述对象。 */
     public static Package parsePackage(PackageParser parser, File packageFile, int flags) throws Throwable {
         if (API_LEVEL >= M) {
             return BRPackageParserMarshmallow.getWithException(parser).parsePackage(packageFile, flags);
@@ -50,6 +54,7 @@ public class PackageParserCompat {
         }
     }
 
+    /** 收集证书，兼容 Pie/N 等版本差异。 */
     public static void collectCertificates(PackageParser parser, Package p, int flags) throws Throwable {
         if (BuildCompat.isPie()) {
             BRPackageParserPie.getWithException().collectCertificates(p, true);

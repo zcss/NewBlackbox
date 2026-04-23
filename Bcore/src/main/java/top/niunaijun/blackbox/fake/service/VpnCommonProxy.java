@@ -13,6 +13,12 @@ import top.niunaijun.blackbox.proxy.ProxyVpnService;
 import top.niunaijun.blackbox.utils.MethodParameterUtils;
 
 
+/**
+ * VPN 通用代理：
+ * - 统一替换首包名参数；建立 VPN 时将 user 设为 ProxyVpnService，并补充允许/禁止列表中的宿主包；
+ * - 保证分应用 VPN 在虚拟环境中行为一致。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class VpnCommonProxy {
     @ProxyMethod("setVpnPackageAuthorization")
     public static class setVpnPackageAuthorization extends MethodHook {

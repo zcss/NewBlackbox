@@ -10,6 +10,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * AudioRecord 代理：
+ * - 记录构造/开始/停止/读取/释放等关键调用，默认放行；
+ * - 仅增强日志观测，便于定位录音相关问题。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class AudioRecordProxy extends ClassInvocationStub {
     public static final String TAG = "AudioRecordProxy";
 

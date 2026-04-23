@@ -3,6 +3,9 @@ package top.niunaijun.blackbox.core.system.am;
 import java.util.Objects;
 
 
+/**
+ * PendingIntent 记录：存储来源uid与包名，便于反查。
+ */
 public class PendingIntentRecord {
     public int uid;
     public String packageName;

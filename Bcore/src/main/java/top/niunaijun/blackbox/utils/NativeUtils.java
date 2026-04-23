@@ -14,8 +14,9 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-
-
+/**
+ * Native so 管理：从 APK 提取匹配 ABI 的 .so 到指定目录（优先 CPU_ABI，其次 armeabi 兜底）。
+ */
 public class NativeUtils {
     public static final String TAG = "VirtualM";
 
@@ -28,13 +29,12 @@ public class NativeUtils {
             if (findAndCopyNativeLib(zipfile, Build.CPU_ABI, nativeLibDir)) {
                 return;
             }
-
+            // 兜底到 armeabi
             findAndCopyNativeLib(zipfile, "armeabi", nativeLibDir);
         } finally {
             Log.d(TAG, "Done! +" + (System.currentTimeMillis() - startTime) + "ms");
         }
     }
-
 
     private static boolean findAndCopyNativeLib(ZipFile zipfile, String cpuArch, File nativeLibDir) throws Exception {
         Log.d(TAG, "Try to copy plugin's cup arch: " + cpuArch);
@@ -44,7 +44,6 @@ public class NativeUtils {
         String libPrefix = "lib/" + cpuArch + "/";
         ZipEntry entry;
         Enumeration e = zipfile.entries();
-
         while (e.hasMoreElements()) {
             entry = (ZipEntry) e.nextElement();
             String entryName = entry.getName();
@@ -55,20 +54,13 @@ public class NativeUtils {
             if (!entryName.endsWith(".so") || !entryName.startsWith(libPrefix)) {
                 continue;
             }
-
             if (buffer == null) {
                 findSo = true;
                 Log.d(TAG, "Found plugin's cup arch dir: " + cpuArch);
                 buffer = new byte[8192];
             }
-
             String libName = entryName.substring(entryName.lastIndexOf('/') + 1);
             Log.d(TAG, "verify so " + libName);
-
-
-
-
-
             File libFile = new File(nativeLibDir, libName);
             if (libFile.exists() && libFile.length() == entry.getSize()) {
                 Log.d(TAG, libName + " skip copy");
@@ -78,12 +70,10 @@ public class NativeUtils {
             Log.d(TAG, "copy so " + entry.getName() + " of " + cpuArch);
             copySo(buffer, zipfile.getInputStream(entry), fos);
         }
-
         if (!findLib) {
             Log.d(TAG, "Fast skip all!");
             return true;
         }
-
         return findSo;
     }
 
@@ -91,7 +81,6 @@ public class NativeUtils {
         BufferedInputStream bufferedInput = new BufferedInputStream(input);
         BufferedOutputStream bufferedOutput = new BufferedOutputStream(output);
         int count;
-
         while ((count = bufferedInput.read(buffer)) > 0) {
             bufferedOutput.write(buffer, 0, count);
         }

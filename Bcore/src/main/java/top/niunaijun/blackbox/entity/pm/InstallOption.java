@@ -4,6 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 
+/**
+ * 安装选项：以位标志组合描述系统安装/存储安装/URI文件安装。
+ */
 public class InstallOption implements Parcelable {
     public static final int FLAG_SYSTEM = 1;
     public static final int FLAG_STORAGE = 1 << 1;

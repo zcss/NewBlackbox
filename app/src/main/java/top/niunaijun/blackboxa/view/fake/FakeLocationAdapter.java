@@ -11,7 +11,11 @@ import top.niunaijun.blackboxa.bean.FakeLocationBean;
 import top.niunaijun.blackboxa.databinding.ItemFakeBinding;
 import top.niunaijun.blackboxa.util.ResUtil;
 
+/**
+ * 虚拟定位应用列表适配器。
+ */
 public class FakeLocationAdapter extends RVHolderFactory {
+    /** 创建 ViewHolder。*/
     @Override
     public RVHolder<?> createViewHolder(ViewGroup parent, int viewType, Object item) {
         return new FakeLocationVH(inflate(R.layout.item_fake, parent));

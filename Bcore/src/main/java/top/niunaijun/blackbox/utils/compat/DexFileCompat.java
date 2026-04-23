@@ -6,9 +6,12 @@ import java.util.List;
 import dalvik.system.DexFile;
 import top.niunaijun.blackbox.utils.Reflector;
 
-
+/**
+ * DexFile 兼容工具：从 ClassLoader/DexFile 中提取 cookies（native 句柄），适配 M 及以下差异。
+ */
 public class DexFileCompat {
 
+    /** 从类加载器中提取所有 DexFile 对应的 cookies。 */
     public static List<Long> getCookies(ClassLoader classLoader) {
         List<Long> cookies = new ArrayList<>();
         List<DexFile> dexFiles = getDexFiles(classLoader);
@@ -18,6 +21,7 @@ public class DexFileCompat {
         return cookies;
     }
 
+    /** 从单个 DexFile 提取 cookie（M 起为 long[]，更早为 long）。 */
     public static List<Long> getCookies(DexFile dexFile) {
         List<Long> cookies = new ArrayList<>();
         if (dexFile == null)

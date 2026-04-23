@@ -3,6 +3,9 @@ package top.niunaijun.blackbox.proxy.record;
 import android.content.Intent;
 
 
+/**
+ * 代理广播记录：封装广播Intent与userId，透传至虚拟AMS。
+ */
 public class ProxyBroadcastRecord {
     public Intent mIntent;
     public int mUserId;

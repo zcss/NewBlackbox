@@ -10,7 +10,9 @@ import java.io.Serializable;
 import top.niunaijun.blackbox.BlackBoxCore;
 import top.niunaijun.blackbox.utils.compat.ContentProviderCompat;
 
-
+/**
+ * Provider 调用工具：封装 ContentProvider.call，支持 builder 式参数收集与自动重试。
+ */
 public class ProviderCall {
     public static Bundle callSafely(String authority, String methodName, String arg, Bundle bundle) {
         try {
@@ -26,6 +28,7 @@ public class ProviderCall {
         return ContentProviderCompat.call(context, uri, method, arg, bundle, retryCount);
     }
 
+    /** Builder 用于便捷构建 call 参数。 */
     public static final class Builder {
 
         private Context context;

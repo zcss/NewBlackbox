@@ -30,6 +30,9 @@ import top.niunaijun.blackbox.utils.FileUtils;
 import top.niunaijun.blackbox.core.system.JarManager;
 
 
+/**
+ * BlackBox 系统引导：初始化环境、注册并启动所有系统服务，执行预装包逻辑。
+ */
 public class BlackBoxSystem {
     private static BlackBoxSystem sBlackBoxSystem;
     private final List<ISystemService> mServices = new ArrayList<>();

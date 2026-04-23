@@ -10,6 +10,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.MethodParameterUtils;
 
 
+/**
+ * TelephonyRegistry 代理：
+ * - 替换 telephony.registry 服务；listen/listenForSubscriber 统一首包名参数；
+ * - 确保电话状态监听在虚拟环境下参数一致。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class ITelephonyRegistryProxy extends BinderInvocationStub {
     public ITelephonyRegistryProxy() {
         super(BRServiceManager.get().getService("telephony.registry"));

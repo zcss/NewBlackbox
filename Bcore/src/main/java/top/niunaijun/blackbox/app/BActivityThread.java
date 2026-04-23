@@ -87,6 +87,10 @@ import top.niunaijun.blackbox.utils.compat.StrictModeCompat;
 import top.niunaijun.blackbox.core.system.JarManager;
 
 
+/**
+ * 虚拟ActivityThread：在沙盒进程内模拟Android ActivityThread，负责绑定应用、创建四大组件、安装Provider等。
+ * 注意：只添加必要说明，避免噪音。
+ */
 public class BActivityThread extends IBActivityThread.Stub {
     public static final String TAG = "BActivityThread";
 
@@ -102,6 +106,7 @@ public class BActivityThread extends IBActivityThread.Stub {
         return sBActivityThread != null;
     }
 
+    /** 获取（或懒加载）当前虚拟ActivityThread单例 */
     public static BActivityThread currentActivityThread() {
         if (sBActivityThread == null) {
             synchronized (BActivityThread.class) {
@@ -113,6 +118,7 @@ public class BActivityThread extends IBActivityThread.Stub {
         return sBActivityThread;
     }
 
+    /** 获取当前绑定的AppConfig（线程安全） */
     public static AppConfig getAppConfig() {
         synchronized (mConfigLock) {
             return currentActivityThread().mAppConfig;
@@ -171,6 +177,7 @@ public class BActivityThread extends IBActivityThread.Stub {
         return getAppConfig() == null ? 0 : getAppConfig().userId;
     }
 
+    /** 进程级初始化：绑定AppConfig并监听死亡，防多包混用 */
     public void initProcess(AppConfig appConfig) {
         synchronized (mConfigLock) {
             if (this.mAppConfig != null && !this.mAppConfig.packageName.equals(appConfig.packageName)) {
@@ -202,6 +209,7 @@ public class BActivityThread extends IBActivityThread.Stub {
         return mBoundApplication != null;
     }
 
+    /** 反射创建目标Service并attach上下文，失败时对GMS类名进行兼容跳过 */
     public Service createService(ServiceInfo serviceInfo, IBinder token) {
         if (!BActivityThread.currentActivityThread().isInit()) {
             BActivityThread.currentActivityThread().bindApplication(serviceInfo.packageName, serviceInfo.processName);
@@ -257,6 +265,7 @@ public class BActivityThread extends IBActivityThread.Stub {
         }
     }
 
+    /** 创建JobService并调用onCreate/onBind，包含GMS兼容跳过 */
     public JobService createJobService(ServiceInfo serviceInfo) {
         if (!BActivityThread.currentActivityThread().isInit()) {
             BActivityThread.currentActivityThread().bindApplication(serviceInfo.packageName, serviceInfo.processName);
@@ -313,6 +322,7 @@ public class BActivityThread extends IBActivityThread.Stub {
         }
     }
 
+    /** 绑定应用：主线程或切回主线程后完成绑定与handleBindApplication */
     public void bindApplication(final String packageName, final String processName) {
         if (Looper.myLooper() != Looper.getMainLooper()) {
             final ConditionVariable conditionVariable = new ConditionVariable();
@@ -331,6 +341,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
     
     
+    /** 构造轻量绑定数据：暴露getInfo/getProviders供后续反射访问 */
     private Object createBindApplicationData(String packageName, String processName) {
         try {
             
@@ -355,6 +366,7 @@ public class BActivityThread extends IBActivityThread.Stub {
         }
     }
 
+    /** 处理绑定：完成LoadedApk、StrictMode、WebView目录、虚拟Runtime设置、Application创建与Provider安装 */
     public synchronized void handleBindApplication(String packageName, String processName) {
         if (isInit())
             return;
@@ -486,6 +498,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
     
     
+    /** 初始化JAR环境：确保空JAR可用，用于类加载兜底 */
     private void initializeJarEnvironment() {
         try {
             Slog.d(TAG, "Initializing JAR environment for DEX loading");
@@ -518,6 +531,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
     
     
+    /** Application创建兜底链：正常->反射->最小包装Application */
     private Application createApplicationWithFallback(android.content.pm.ApplicationInfo appInfo) {
         try {
             
@@ -574,6 +588,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
     
     
+    /** Provider安装兜底：逐个安装，失败不中断 */
     private void installContentProvidersWithFallback(Application application, Object data) {
         try {
             List<android.content.pm.ProviderInfo> providers = getProviderInfoList(data);
@@ -600,6 +615,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
     
     
+    /** 通过入参或BPM取回ApplicationInfo */
     private android.content.pm.ApplicationInfo getApplicationInfo(Object data) {
         try {
             
@@ -631,6 +647,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
     
     
+    /** 根据sourceDir构造PathClassLoader，缺省用系统ClassLoader */
     private ClassLoader getClassLoader(android.content.pm.ApplicationInfo appInfo) {
         try {
             
@@ -648,6 +665,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
 
     
+    /** 反射创建Application并attach BaseContext */
     private Application createApplication(android.content.pm.ApplicationInfo appInfo) {
         try {
             
@@ -666,6 +684,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
     
     
+    /** 若未attach BaseContext，则创建包上下文并通过反射attach */
     private void ensureApplicationBaseContext(Application application, android.content.pm.ApplicationInfo appInfo) {
         try {
             
@@ -704,6 +723,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
     
     
+    /** 创建包名包装的后备Context：资源/类加载委托宿主 */
     private Context createFallbackContext(String packageName) {
         try {
             Context baseContext = BlackBoxCore.getContext();
@@ -776,6 +796,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
     
     
+    /** 读取Provider列表：优先从绑定数据getProviders获取 */
     private List<android.content.pm.ProviderInfo> getProviderInfoList(Object data) {
         try {
             
@@ -801,6 +822,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
     
     
+    /** 反射创建并attachInfo安装ContentProvider */
     private void installContentProvider(Application application, android.content.pm.ProviderInfo providerInfo) {
         try {
             
@@ -833,6 +855,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
     
     
+    /** 将Application写入系统ActivityThread并保存在本地字段 */
     private void setApplication(Application application) {
         try {
             mInitialApplication = application;
@@ -843,6 +866,7 @@ public class BActivityThread extends IBActivityThread.Stub {
         }
     }
 
+    /** 统一处理安全异常：尽量创建最小可运行Application，避免崩溃 */
     private void handleSecurityException(SecurityException se, String packageName, String processName, Context packageContext) {
         Slog.w(TAG, "Handling SecurityException for " + packageName);
         
@@ -866,6 +890,7 @@ public class BActivityThread extends IBActivityThread.Stub {
         throw new RuntimeException("Unable to handle SecurityException", se);
     }
 
+    /** Provider批量安装：逐项捕获异常并继续，最后初始化委托 */
     private void installProvidersWithErrorHandling(Context context, String processName, List<ProviderInfo> providers) {
         long origId = Binder.clearCallingIdentity();
         try {
@@ -893,6 +918,7 @@ public class BActivityThread extends IBActivityThread.Stub {
         }
     }
 
+    /** 使用宿主Context创建目标包上下文（含代码、忽略签名） */
     public static Context createPackageContext(ApplicationInfo info) {
         try {
             return BlackBoxCore.getContext().createPackageContext(info.packageName,
@@ -904,6 +930,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
 
     
+    /** 逐级降级创建包上下文：失败则回退到包装宿主Context */
     private static Context createMinimalPackageContext(ApplicationInfo info) {
         try {
             
@@ -952,6 +979,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
 
     
+    /** 用包名包装宿主Context，覆盖包名/PM/Resources/ClassLoader */
     private static Context createWrappedBaseContext(String packageName) {
         try {
             Context baseContext = BlackBoxCore.getContext();
@@ -1008,6 +1036,7 @@ public class BActivityThread extends IBActivityThread.Stub {
         }
     }
 
+    /** 返回LoadedApk对象 */
     public Object getPackageInfo() {
         return mBoundApplication.info;
     }
@@ -1023,11 +1052,13 @@ public class BActivityThread extends IBActivityThread.Stub {
 
 
     @Override
+    /** 返回系统ActivityThread的ApplicationThread Binder */
     public IBinder getActivityThread() {
         return BRActivityThread.get(BlackBoxCore.mainThread()).getApplicationThread();
     }
 
     @Override
+    /** 若未初始化则按当前AppConfig触发绑定 */
     public void bindApplication() {
         if (!isInit()) {
             bindApplication(getAppPackageName(), getAppProcessName());

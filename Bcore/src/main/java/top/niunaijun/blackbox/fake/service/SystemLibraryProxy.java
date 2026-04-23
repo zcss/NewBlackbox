@@ -8,6 +8,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * System.load/loadLibrary 代理：
+ * - 记录并放行常规库加载，对 c++_shared/Flutter/Meemo 等已知敏感库做宽松处理；
+ * - 在不影响系统行为的前提下降低 so 加载失败导致的崩溃概率。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class SystemLibraryProxy extends ClassInvocationStub {
     public static final String TAG = "SystemLibraryProxy";
 

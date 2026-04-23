@@ -31,6 +31,9 @@ import top.niunaijun.blackboxa.util.InjectionUtil;
 import top.niunaijun.blackboxa.util.ToastEx;
 import top.niunaijun.blackboxa.view.base.BaseActivity;
 
+/**
+ * 虚拟定位管理页：按应用配置虚拟坐标、支持搜索/关闭虚拟定位。
+ */
 public class FakeManagerActivity extends BaseActivity {
     private static final String TAG = "FakeManagerActivity";
 
@@ -86,6 +89,7 @@ public class FakeManagerActivity extends BaseActivity {
         initViewModel();
     }
 
+    /** 关闭某应用的虚拟定位并更新列表项。*/
     private void disableFakeLocation(@NonNull FakeLocationBean item, int position) {
         new android.app.AlertDialog.Builder(this)
                 .setTitle(R.string.close_fake_location)
@@ -110,6 +114,7 @@ public class FakeManagerActivity extends BaseActivity {
                 .show();
     }
 
+    /** 初始化搜索框监听。*/
     private void initSearchView() {
         viewBinding.searchView.setOnQueryTextListener(new SimpleSearchView.OnQueryTextListener() {
             @Override
@@ -129,11 +134,13 @@ public class FakeManagerActivity extends BaseActivity {
             }
         });
     }
+    /** 加载应用列表并显示加载态。*/
     public void loadAppList() {
         viewBinding.stateView.showLoading();
         viewModel.getInstallAppList(currentUserID());
     }
 
+    /** 初始化 ViewModel 并绑定数据观察者。*/
     private void initViewModel() {
         viewModel = new ViewModelProvider(this, InjectionUtil.getFakeLocationFactory()).get(FakeLocationViewModel.class);
         loadAppList();
@@ -155,6 +162,7 @@ public class FakeManagerActivity extends BaseActivity {
 
 
 
+    /** 根据关键字过滤应用列表并刷新显示。*/
     private void filterApp(@NonNull String newText) {
         List<FakeLocationBean> newList = new ArrayList<>();
         for (FakeLocationBean bean : this.appList) {

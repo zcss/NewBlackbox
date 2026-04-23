@@ -25,6 +25,12 @@ import top.niunaijun.blackbox.utils.compat.StartActivityCompat;
 import static android.content.pm.PackageManager.GET_META_DATA;
 
 
+/**
+ * ActivityManager 通用代理方法集：
+ * - 处理 startActivity/startActivities 等入口的参数修正、解析与转发到虚拟 AMS；
+ * - 安装意图处理：file://→content:// 转换、禁止在壳内安装宿主自身等；
+ * - 分发生命周期通知到 BActivityManager（resumed/destroyed/finish 等）。
+ */
 public class ActivityManagerCommonProxy {
     public static final String TAG = "CommonStub";
 

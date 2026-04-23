@@ -7,6 +7,10 @@ import top.niunaijun.blackbox.app.BActivityThread;
 import top.niunaijun.blackbox.fake.hook.MethodHook;
 
 
+/**
+ * UidMethodProxy：当参数 UID 为虚拟 UID 时，替换为宿主 UID 再调用原方法。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class UidMethodProxy extends MethodHook {
     private final int index;
     private final String name;

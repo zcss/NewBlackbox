@@ -27,6 +27,13 @@ import top.niunaijun.blackbox.entity.pm.InstalledPackage;
 import top.niunaijun.blackbox.utils.TransactionThrottler;
 
 
+/**
+ * 包管理框架代理：
+ * - 统一封装解析/查询/安装/卸载/枚举等接口到 IBPackageManagerService；
+ * - 内置失败节流与回退策略（fallback intent/info），提升稳定性；
+ * - 关键操作避免自安装递归（阻断安装宿主包）。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class BPackageManager extends BlackManager<IBPackageManagerService> {
     private static final BPackageManager sPackageManager = new BPackageManager();
     private final TransactionThrottler transactionThrottler = new TransactionThrottler();

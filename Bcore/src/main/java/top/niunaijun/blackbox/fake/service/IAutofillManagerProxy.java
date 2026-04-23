@@ -14,6 +14,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.proxy.ProxyManifest;
 
 
+/**
+ * AutofillManager 代理：
+ * - 替换 autofill 服务；启动会话时将组件名替换为宿主包下的代理 Activity，保障流程可用；
+ * - 其余行为透传，避免自动填充在虚拟环境中异常。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IAutofillManagerProxy extends BinderInvocationStub {
     public static final String TAG = "AutofillManagerStub";
 

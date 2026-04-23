@@ -11,6 +11,12 @@ import top.niunaijun.blackbox.fake.service.base.ValueMethodProxy;
 import top.niunaijun.blackbox.utils.MethodParameterUtils;
 
 
+/**
+ * AppWidgetManager 代理：
+ * - 替换桌面小部件服务，统一替换包名参数；常见监听/更新等接口返回安全默认值；
+ * - 保证虚拟环境中桌面组件相关调用不崩溃。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IAppWidgetManagerProxy extends BinderInvocationStub {
 
     public IAppWidgetManagerProxy() {

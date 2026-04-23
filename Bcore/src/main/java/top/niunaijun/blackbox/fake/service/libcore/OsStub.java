@@ -14,6 +14,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Reflector;
 
 
+/**
+ * libcore.os 代理：
+ * - 注入替换 libcore.os；路径参数统一走 IOCore 重定向；
+ * - getuid/stat 返回虚拟/宿主 UID，确保沙盒内文件/权限语义一致。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class OsStub extends ClassInvocationStub {
     public static final String TAG = "OsStub";
     private Object mBase;

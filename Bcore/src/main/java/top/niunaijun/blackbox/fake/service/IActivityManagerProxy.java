@@ -62,10 +62,19 @@ import static android.content.pm.PackageManager.GET_META_DATA;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 
+/**
+ * ActivityManager 代理：
+ * - 拦截并适配系统 IActivityManager 调用，在沙盒内代理进程/服务/广播等；
+ * - 针对不同 Android 版本差异（L/O/Q/S/T/U）选择性注入与参数修正；
+ * - 常见 SecurityException 采用安全默认值兜底，避免因权限/标志位导致崩溃。
+ */
 @ScanClass(ActivityManagerCommonProxy.class)
 public class IActivityManagerProxy extends ClassInvocationStub {
     public static final String TAG = "ActivityManagerStub";
 
+    /**
+     * 获取系统原始 IActivityManager 实例（不同 Android 版本取不同单例）。
+     */
     @Override
     protected Object getWho() {
         Object iActivityManager = null;
@@ -93,6 +102,9 @@ public class IActivityManagerProxy extends ClassInvocationStub {
         return getProxyInvocation() != getWho();
     }
 
+    /**
+     * 注册需拦截的方法：启动模式、验证上报等，按需返回默认值以保证稳定。
+     */
     @Override
     protected void onBindMethod() {
         super.onBindMethod();
@@ -101,6 +113,10 @@ public class IActivityManagerProxy extends ClassInvocationStub {
         addMethodHook(new PkgMethodProxy("reportJunkFromApp"));
     }
 
+    /**
+     * 统一拦截 IActivityManager 方法调用，针对常见 SecurityException 做安全兜底，
+     * 避免因系统限制导致崩溃；对 set/get/start/stop 等类别返回合理默认值。
+     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         try {

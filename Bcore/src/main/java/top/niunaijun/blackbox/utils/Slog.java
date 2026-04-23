@@ -5,6 +5,9 @@ package top.niunaijun.blackbox.utils;
 import android.util.Log;
 
 
+/**
+ * 统一日志工具：包装 android.util.Log，提供简单级别输出与堆栈附带打印。
+ */
 public final class Slog {
      public static final int LOG_ID_SYSTEM = 3;
 

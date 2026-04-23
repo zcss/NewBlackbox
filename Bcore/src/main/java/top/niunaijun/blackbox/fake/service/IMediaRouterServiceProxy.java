@@ -12,6 +12,11 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.MethodParameterUtils;
 
 
+/**
+ * MediaRouterService 代理：
+ * - 替换媒体路由服务，注册/路由时统一首参包名修正；
+ * - 确保投屏/路由注册在虚拟环境中的稳定性。
+ */
 public class IMediaRouterServiceProxy extends BinderInvocationStub {
 
     public IMediaRouterServiceProxy() {

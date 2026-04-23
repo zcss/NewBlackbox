@@ -18,6 +18,13 @@ import top.niunaijun.blackbox.utils.Slog;
 import top.niunaijun.blackbox.app.BActivityThread;
 
 
+/**
+ * WebView 代理：
+ * - 为 WebView 按用户/进程设置独立 data/cache/db 目录，避免多进程数据冲突；
+ * - 构造/设置时开启必要特性（JS/DOMStorage/DB、混合内容、UA 后缀、网络可用等）；
+ * - setDataDirectorySuffix/getDataDirectory/getInstance 等路径统一加上唯一后缀；
+ * - loadUrl 仅记录与轻量处理 file:// 等场景，保持逻辑透传。
+ */
 public class WebViewProxy extends ClassInvocationStub {
     public static final String TAG = "WebViewProxy";
 

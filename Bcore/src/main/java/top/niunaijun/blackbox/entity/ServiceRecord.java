@@ -10,12 +10,16 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
+/**
+ * Service运行记录：缓存Service实例、绑定信息及startId，用于决定生命周期与解绑策略。
+ */
 public class ServiceRecord {
     private Service mService;
     private Map<Intent.FilterComparison, BoundInfo> mBounds = new HashMap<>();
     private boolean rebind;
     private int mStartId;
 
+    /** 单个Intent绑定的信息（binder与计数） */
     public class BoundInfo {
         private IBinder mIBinder;
         private AtomicInteger mBindCount = new AtomicInteger(0);

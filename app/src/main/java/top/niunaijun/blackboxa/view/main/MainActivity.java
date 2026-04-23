@@ -34,6 +34,9 @@ import top.niunaijun.blackboxa.view.fake.FakeManagerActivity;
 import top.niunaijun.blackboxa.view.list.ListActivity;
 import top.niunaijun.blackboxa.view.setting.SettingActivity;
 
+/**
+ * 主页面：承载多用户应用列表、FAB 安装入口与权限检查。
+ */
 public class MainActivity extends LoadingActivity {
     private static final String TAG = "MainActivity";
     private static final int STORAGE_PERMISSION_REQUEST_CODE = 1001;
@@ -80,6 +83,7 @@ public class MainActivity extends LoadingActivity {
         }
     }
 
+    /** 检查并申请存储访问权限（根据 Android 版本区分）。*/
     private void checkStoragePermission() {
         try {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
@@ -100,6 +104,7 @@ public class MainActivity extends LoadingActivity {
         }
     }
 
+    /** 申请旧版外部存储读写权限（Android 11 以下）。*/
     private void requestLegacyStoragePermission() {
         try {
             ActivityCompat.requestPermissions(this,
@@ -129,6 +134,7 @@ public class MainActivity extends LoadingActivity {
         }
     }
 
+    /** 弹窗引导用户前往授权“所有文件访问”权限。*/
     private void showStoragePermissionDialog() {
         try {
             new MaterialDialog(this,MaterialDialog.getDEFAULT_BEHAVIOR())
@@ -158,6 +164,7 @@ public class MainActivity extends LoadingActivity {
                 }
             });
 
+    /** 打开系统设置页以授权“所有文件访问”权限。*/
     private void openAllFilesAccessSettings() {
         try {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
@@ -176,6 +183,7 @@ public class MainActivity extends LoadingActivity {
         }
     }
 
+    /** 检查并申请 VPN 权限。*/
     private void checkVpnPermission() {
         try {
             Intent vpnIntent = VpnService.prepare(this);
@@ -202,6 +210,7 @@ public class MainActivity extends LoadingActivity {
                 }
             });
 
+    /** 显示致命错误提示并可选择关闭页面。*/
     private void showErrorDialog(String message) {
         try {
             new MaterialDialog(this,MaterialDialog.getDEFAULT_BEHAVIOR())
@@ -215,6 +224,7 @@ public class MainActivity extends LoadingActivity {
         }
     }
 
+    /** 初始化工具栏副标题（用户备注），支持点击编辑保存。*/
     private void initToolbarSubTitle() {
         try {
             updateUserRemark(0);
@@ -256,6 +266,7 @@ public class MainActivity extends LoadingActivity {
         }
     }
 
+    /** 初始化 ViewPager：按用户构建 AppsFragment 列表并绑定指示器。*/
     private void initViewPager() {
         try {
             List<BUserInfo> userList = BlackBoxCore.get().getUsers();
@@ -287,6 +298,7 @@ public class MainActivity extends LoadingActivity {
         }
     }
 
+    /** 初始化悬浮按钮，进入安装列表页（按当前页 userId）。*/
     private void initFab() {
         try {
             viewBinding.fab.setOnClickListener(v -> {
@@ -304,6 +316,7 @@ public class MainActivity extends LoadingActivity {
         }
     }
 
+    /** 显示或隐藏悬浮按钮并播放过渡动画。*/
     public void showFloatButton(boolean show) {
         try {
             float tranY = Resolution.convertDpToPixel(120F, App.getContext());

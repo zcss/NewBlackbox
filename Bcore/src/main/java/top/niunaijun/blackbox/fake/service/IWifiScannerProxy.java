@@ -8,6 +8,12 @@ import black.android.os.BRServiceManager;
 import top.niunaijun.blackbox.fake.hook.BinderInvocationStub;
 
 
+/**
+ * WifiScanner 代理：
+ * - 替换 wifiscanner 服务；保持扫描相关调用可用；
+ * - 与 WifiManager 代理配合，隔离真实环境信息。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IWifiScannerProxy extends BinderInvocationStub {
 
     public IWifiScannerProxy() {

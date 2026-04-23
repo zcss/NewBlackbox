@@ -25,6 +25,13 @@ import top.niunaijun.blackbox.app.BActivityThread;
 import top.niunaijun.blackbox.app.configuration.AppLifecycleCallback;
 import top.niunaijun.blackbox.utils.Reflector;
 
+/**
+ * Instrumentation 委托基类：
+ * - 持有系统 Instrumentation 的引用并将大部分回调透明转发；
+ * - 对 Activity 生命周期分发到 AppLifecycleCallback；
+ * - 兼容低版本 addResults 行为（O 以下通过 sendStatus/本地存储兜底）；
+ * - 提供 execStartActivity 的反射调用以兼容不同 ROM/版本签名。
+ */
 public class BaseInstrumentationDelegate extends Instrumentation {
 
     protected Instrumentation mBaseInstrumentation;

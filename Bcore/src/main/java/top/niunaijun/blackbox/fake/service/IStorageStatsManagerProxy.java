@@ -13,6 +13,12 @@ import top.niunaijun.blackbox.utils.MethodParameterUtils;
 
 
 @TargetApi(Build.VERSION_CODES.O)
+/**
+ * StorageStatsManager 代理：
+ * - 替换存储统计服务；统一首包名参数，避免跨用户/虚拟环境取值异常；
+ * - 其余行为透传。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IStorageStatsManagerProxy extends BinderInvocationStub {
 
     public IStorageStatsManagerProxy() {

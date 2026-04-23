@@ -17,6 +17,12 @@ import top.niunaijun.blackbox.utils.MethodParameterUtils;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * AppOpsManager 代理：
+ * - 注入并替换 AppOpsManager.mService，注册到系统 ServiceManager；
+ * - 对 check/note/start/finish 等操作统一返回 MODE_ALLOWED 或安全默认值；
+ * - 自动修正包名/UID 参数，尽量避免因系统策略导致崩溃。
+ */
 public class IAppOpsManagerProxy extends BinderInvocationStub {
     public IAppOpsManagerProxy() {
         super(BRServiceManager.get().getService(Context.APP_OPS_SERVICE));
@@ -28,6 +34,10 @@ public class IAppOpsManagerProxy extends BinderInvocationStub {
         return BRIAppOpsServiceStub.get().asInterface(call);
     }
 
+    /**
+     * 将代理注入系统服务，替换 AppOpsManager 的 mService，
+     * 并注册到系统 ServiceManager，确保后续调用均经过代理。
+     */
     @Override
     protected void inject(Object baseInvocation, Object proxyInvocation) {
         if (BRAppOpsManager.get(null)._check_mService() != null) {
@@ -41,6 +51,10 @@ public class IAppOpsManagerProxy extends BinderInvocationStub {
         replaceSystemService(Context.APP_OPS_SERVICE);
     }
 
+    /**
+     * 统一拦截 AppOps 调用：对检查/记录/开始/结束等操作默认允许或安全返回，
+     * 防止因系统策略导致沙盒应用异常。
+     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         String methodName = method.getName();

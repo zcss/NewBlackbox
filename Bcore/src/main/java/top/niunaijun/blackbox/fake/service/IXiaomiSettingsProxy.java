@@ -10,6 +10,12 @@ import top.niunaijun.blackbox.utils.AttributionSourceUtils;
 import top.niunaijun.blackbox.util.XiaomiDeviceDetector;
 
 
+/**
+ * 小米 Settings 代理：
+ * - 读取 getString getInt* 前修正 AttributionSource/UID，MIUI 下 UID 不匹配时返回安全默认；
+ * - 保障不同 MIUI 版本的设置读取在虚拟环境下不崩溃。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IXiaomiSettingsProxy extends ClassInvocationStub {
     public static final String TAG = "IXiaomiSettingsProxy";
 

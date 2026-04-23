@@ -11,6 +11,12 @@ import top.niunaijun.blackbox.fake.hook.ClassInvocationStub;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * WebViewUpdateService 代理：
+ * - 优先透传查询当前/可用 WebView 包信息，失败时返回空或 null 以回退系统默认；
+ * - 强制单进程 isMultiProcessEnabled=false，避免多进程冲突；
+ * - 兼容厂商包名判断，避免更新通道/包名差异引发异常。
+ */
 public class IWebViewUpdateServiceProxy extends ClassInvocationStub {
     public static final String TAG = "IWebViewUpdateServiceProxy";
 

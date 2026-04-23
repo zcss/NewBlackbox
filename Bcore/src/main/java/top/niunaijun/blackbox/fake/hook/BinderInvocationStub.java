@@ -14,6 +14,12 @@ import java.util.Map;
 import black.android.os.BRServiceManager;
 
 
+/**
+ * Binder 层代理基类：
+ * - 作为 IBinder 包装器拦截 queryLocalInterface 并返回自定义代理对象；
+ * - 透传其余 Binder 方法，支持替换 ServiceManager.sCache 条目；
+ * - 配合 ClassInvocationStub 提供方法级 Hook。
+ */
 public abstract class BinderInvocationStub extends ClassInvocationStub implements IBinder {
     private IBinder mBaseBinder;
 

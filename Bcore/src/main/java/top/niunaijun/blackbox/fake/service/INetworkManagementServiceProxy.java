@@ -14,6 +14,12 @@ import top.niunaijun.blackbox.utils.MethodParameterUtils;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * NetworkManagement 代理：
+ * - 替换 network_management 服务；统一替换首个 UID/包名参数，避免宿主与虚拟 UID 混淆；
+ * - 处理 getNetworkStatsUidDetail 等接口的参数归一化，保证统计/策略调用稳定。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class INetworkManagementServiceProxy extends BinderInvocationStub {
     public static final String NAME = "network_management";
 

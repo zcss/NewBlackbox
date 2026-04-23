@@ -1,6 +1,9 @@
 package top.niunaijun.blackbox.proxy;
 
 
+/**
+ * 透明代理Activity：继承代理Activity，用于需半透明主题的场景，行为一致仅主题不同。
+ */
 public class TransparentProxyActivity extends ProxyActivity {
 
     public static class P0 extends TransparentProxyActivity {

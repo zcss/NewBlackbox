@@ -16,6 +16,12 @@ import top.niunaijun.blackbox.app.BActivityThread;
 import top.niunaijun.blackbox.proxy.record.ProxyBroadcastRecord;
 
 
+/**
+ * 广播接收器代理：
+ * - 将系统传入的 IIntentReceiver 包装为可维护的代理，解决类加载器/进程死亡清理等问题；
+ * - performReceive 前设置正确的 ClassLoader，并通过 ProxyBroadcastRecord 还原原始 Intent；
+ * - 维护 IBinder→Delegate 的弱引用映射与死亡回调，避免泄漏。
+ */
 public class InnerReceiverDelegate extends IIntentReceiver.Stub {
     public static final String TAG = "InnerReceiverDelegate";
 

@@ -17,6 +17,9 @@ import top.niunaijun.blackbox.utils.CloseUtils;
 import top.niunaijun.blackbox.utils.FileUtils;
 
 
+/**
+ * 包设置：保存包级别安装选项与各 userId 的安装/停止/隐藏状态，支持序列化持久化到 package.conf。
+ */
 public class BPackageSettings implements Parcelable {
     public BPackage pkg;
     public int appId;

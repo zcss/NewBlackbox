@@ -13,6 +13,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * DnsResolver 代理：
+ * - 替换 dnsresolver 服务；解析失败返回公共 DNS 兜底，私有 DNS 配置与超时设置做兼容处理；
+ * - 网络校验统一返回已验证，降低沙盒下的连通性误判。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IDnsResolverProxy extends BinderInvocationStub {
     public static final String TAG = "IDnsResolverProxy";
     public static final String DNS_RESOLVER_SERVICE = "dnsresolver";

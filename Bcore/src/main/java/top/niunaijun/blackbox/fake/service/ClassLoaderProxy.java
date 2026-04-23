@@ -26,6 +26,12 @@ import top.niunaijun.blackbox.utils.Slog;
 import top.niunaijun.blackbox.utils.DexFileRecovery;
 
 
+/**
+ * ClassLoader 代理：
+ * - 维护类缓存/DEX 校验缓存与后备 ClassLoader 列表，提高类加载稳定性；
+ * - loadClass/findClass/forName 失败时走后备加载，屏蔽已知问题类；
+ * - openDexFile/loadDexFile 失败触发 DexFileRecovery 恢复或替代 APK 回退。
+ */
 public class ClassLoaderProxy extends ClassInvocationStub {
     private static final String TAG = "ClassLoaderProxy";
     

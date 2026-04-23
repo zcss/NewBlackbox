@@ -11,6 +11,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * SQLiteDatabase 代理：
+ * - 针对 DurableJob 等已知表/SQL 的查询与执行做安全兜底（返回空/忽略），其余透传；
+ * - 降低三方任务持久化表异常导致的崩溃概率。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class SQLiteDatabaseProxy extends ClassInvocationStub {
     public static final String TAG = "SQLiteDatabaseProxy";
 

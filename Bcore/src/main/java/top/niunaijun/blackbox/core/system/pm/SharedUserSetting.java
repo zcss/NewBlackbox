@@ -15,6 +15,9 @@ import top.niunaijun.blackbox.utils.FileUtils;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * 共享用户设置：跨包共享 userId 的映射与持久化，兼容旧格式清理策略。
+ */
 public final class SharedUserSetting implements Parcelable {
     public static final String TAG = "SharedUserSetting";
     public static final Map<String, SharedUserSetting> sSharedUsers = new HashMap<>();

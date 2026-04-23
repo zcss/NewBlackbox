@@ -50,6 +50,9 @@ import static android.content.pm.PackageManager.MATCH_DIRECT_BOOT_UNAWARE;
 
 
 
+/**
+ * 虚拟包管理服务：维护沙盒内安装包索引/组件解析/安装卸载流程，按用户隔离返回AI/PI/组件信息。
+ */
 public class BPackageManagerService extends IBPackageManagerService.Stub implements ISystemService {
     public static final String TAG = "BPackageManagerService";
     public static BPackageManagerService sService = new BPackageManagerService();

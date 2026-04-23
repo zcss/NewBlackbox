@@ -3,6 +3,9 @@ package top.niunaijun.blackbox.proxy.record;
 import android.content.Intent;
 
 
+/**
+ * 代理Pending记录：封装延迟启动目标与 userId，通过 Intent extras 传递。
+ */
 public class ProxyPendingRecord {
     public int mUserId;
     public Intent mTarget;

@@ -14,6 +14,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * SettingsProvider 代理：
+ * - 拦截 get* 系列接口，遇到 UID 不匹配异常时返回安全默认值；对 feature_flag 统一宽松返回；
+ * - 仅影响读取侧，写入/其他调用透传，保证行为接近系统。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class ISettingsProviderProxy extends ClassInvocationStub {
     public static final String TAG = "ISettingsProviderProxy";
 

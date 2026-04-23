@@ -21,6 +21,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Md5Utils;
 
 
+/**
+ * TelephonyManager 代理：
+ * - 替换电话服务，针对设备标识（IMEI/MEID/SubscriberId 等）返回与宿主包名相关的伪造值；
+ * - 配合 BLocationManager 对基站信息查询进行虚拟化或空返回，避免越权或敏感数据暴露；
+ * - 对网络类型/运营商查询等，尽量透传，异常时给出安全默认值。
+ */
 public class ITelephonyManagerProxy extends BinderInvocationStub {
     public static final String TAG = "ITelephonyManagerProxy";
 

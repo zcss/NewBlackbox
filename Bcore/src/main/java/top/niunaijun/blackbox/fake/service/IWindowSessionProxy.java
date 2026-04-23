@@ -12,6 +12,11 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 
 
 
+/**
+ * WindowSession 代理：
+ * - 在 addToDisplay/relayout 等入口修正 LayoutParams.packageName 为宿主包名；
+ * - 支持按开关移除 FLAG_SECURE，提升兼容性（截图/投屏场景）。
+ */
 public class IWindowSessionProxy extends BinderInvocationStub {
     public static final String TAG = "WindowSessionStub";
 

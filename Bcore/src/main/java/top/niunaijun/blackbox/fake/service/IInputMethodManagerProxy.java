@@ -12,6 +12,11 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.fake.hook.ScanClass;
 
 
+/**
+ * InputMethodManager 代理：
+ * - 替换输入法服务，保持 startInputOrWindowGainedFocus 等调用透传；
+ * - 主要用于确保沙盒窗口焦点与输入法交互流程不被系统环境差异打断。
+ */
 @ScanClass(IInputMethodManagerProxy.class)
 public class IInputMethodManagerProxy extends BinderInvocationStub {
     public static final String TAG = "IInputMethodManagerProxy";

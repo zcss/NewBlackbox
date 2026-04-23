@@ -15,6 +15,9 @@ import top.niunaijun.blackbox.entity.AppConfig;
 import top.niunaijun.blackbox.utils.compat.BundleCompat;
 
 
+/**
+ * 宿主侧代理ContentProvider：处理 _Black_|_init_process_ 握手，返回 ActivityThread Binder 给沙盒。
+ */
 public class ProxyContentProvider extends ContentProvider {
     @Override
     public boolean onCreate() {

@@ -18,6 +18,9 @@ import top.niunaijun.blackboxa.databinding.ActivityGmsBinding;
 import top.niunaijun.blackboxa.util.InjectionUtil;
 import top.niunaijun.blackboxa.view.base.LoadingActivity;
 
+/**
+ * GMS 管理页：按用户启用/禁用 GMS，支持提示与结果回显。
+ */
 public class GmsManagerActivity extends LoadingActivity {
 
     private GmsViewModel viewModel;

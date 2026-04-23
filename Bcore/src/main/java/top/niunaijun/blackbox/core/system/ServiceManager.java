@@ -17,6 +17,9 @@ import top.niunaijun.blackbox.core.system.pm.BPackageManagerService;
 import top.niunaijun.blackbox.core.system.user.BUserManagerService;
 
 
+/**
+ * 虚拟系统Service注册中心：提供各核心管理服务的Binder缓存与获取入口。
+ */
 public class ServiceManager {
     private static ServiceManager sServiceManager = null;
     public static final String ACTIVITY_MANAGER = "activity_manager";

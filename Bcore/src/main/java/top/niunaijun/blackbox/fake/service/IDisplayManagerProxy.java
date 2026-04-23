@@ -12,6 +12,12 @@ import top.niunaijun.blackbox.fake.service.base.PkgMethodProxy;
 import top.niunaijun.blackbox.utils.MethodParameterUtils;
 
 
+/**
+ * DisplayManager 代理：
+ * - 绑定并替换 DisplayManagerGlobal.mDm；创建虚拟显示时统一首包名参数；
+ * - 确保虚拟显示创建不因包名不一致触发异常。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IDisplayManagerProxy extends ClassInvocationStub {
 
     public IDisplayManagerProxy() {

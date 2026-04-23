@@ -11,11 +11,15 @@ import java.util.zip.ZipFile;
 
 import top.niunaijun.blackbox.BlackBoxCore;
 
-
+/**
+ * ABI 支持性检测：扫描 APK 中 lib/ 目录的 ABI 子目录（arm64-v8a、armeabi、armeabi-v7a），
+ * 缓存每个 APK 的支持情况，并根据当前进程是 32/64 位给出是否支持的判断。
+ */
 public class AbiUtils {
     private final Set<String> mLibs = new HashSet<>();
     private static final Map<File, AbiUtils> sAbiUtilsMap = new HashMap<>();
 
+    /** 当前设备位宽与 apkFile 中 lib/ 的 ABI 是否匹配；无 so 时认为支持。 */
     public static boolean isSupport(File apkFile) {
         AbiUtils abiUtils = sAbiUtilsMap.get(apkFile);
         if (abiUtils == null) {
@@ -25,7 +29,6 @@ public class AbiUtils {
         if (abiUtils.isEmptyAib()) {
             return true;
         }
-
         if (BlackBoxCore.is64Bit()) {
             return abiUtils.is64Bit();
         } else {
@@ -56,14 +59,17 @@ public class AbiUtils {
         }
     }
 
+    /** 是否包含 arm64-v8a。 */
     public boolean is64Bit() {
         return mLibs.contains("arm64-v8a");
     }
 
+    /** 是否包含 armeabi/armeabi-v7a。 */
     public boolean is32Bit() {
         return mLibs.contains("armeabi") || mLibs.contains("armeabi-v7a");
     }
 
+    /** APK 中是否未包含任何已识别 ABI 目录。 */
     public boolean isEmptyAib() {
         return mLibs.isEmpty();
     }

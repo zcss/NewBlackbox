@@ -12,6 +12,9 @@ import top.niunaijun.blackbox.app.BActivityThread;
 import top.niunaijun.blackbox.entity.JobRecord;
 
 
+/**
+ * 虚拟JobService分发器：按jobId管理并分发JobService生命周期。
+ */
 public class AppJobServiceDispatcher {
     private static final AppJobServiceDispatcher sServiceDispatcher = new AppJobServiceDispatcher();
     private final Map<Integer, JobRecord> mJobRecords = new HashMap<>();
@@ -20,6 +23,7 @@ public class AppJobServiceDispatcher {
         return sServiceDispatcher;
     }
 
+    /** onStartJob：创建或复用JobService并转发 */
     public boolean onStartJob(JobParameters params) {
         try {
             JobService jobService = getJobService(params.getJobId());
@@ -32,6 +36,7 @@ public class AppJobServiceDispatcher {
         return false;
     }
 
+    /** onStopJob：停止并清理对应JobService */
     public boolean onStopJob(JobParameters params) {
         JobService jobService = getJobService(params.getJobId());
         if (jobService == null)

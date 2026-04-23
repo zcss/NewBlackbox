@@ -12,6 +12,12 @@ import java.util.Map;
 import top.niunaijun.blackbox.utils.MethodParameterUtils;
 
 
+/**
+ * 动态代理 Hook 基类：
+ * - 以 JDK Proxy 包装目标接口集合，分发到 MethodHook（支持注解扫描注册）；
+ * - 默认透传未注册方法；提供 before/hook/after 三段式拦截；
+ * - 子类实现 getWho/inject 以完成环境注入与替换。
+ */
 public abstract class ClassInvocationStub implements InvocationHandler, IInjectHook {
     public static final String TAG = ClassInvocationStub.class.getSimpleName();
 

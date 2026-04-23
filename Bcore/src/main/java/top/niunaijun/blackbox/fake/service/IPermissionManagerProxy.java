@@ -14,6 +14,12 @@ import top.niunaijun.blackbox.utils.Reflector;
 import top.niunaijun.blackbox.utils.compat.BuildCompat;
 
 
+/**
+ * PermissionManager 代理：
+ * - 替换 permissionmgr 服务并注入 ActivityThread.sPermissionManager；
+ * - 大量权限相关方法返回安全默认值或直通，修正包名，增强稳定性；
+ * - 适配 O+ 的 notifyDexLoad/notifyPackageUse/InstantApp 相关方法。
+ */
 public class IPermissionManagerProxy extends BinderInvocationStub {
     public static final String TAG = "IPermissionManagerProxy";
 

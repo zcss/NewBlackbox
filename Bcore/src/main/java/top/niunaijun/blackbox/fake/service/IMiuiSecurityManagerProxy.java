@@ -12,6 +12,12 @@ import top.niunaijun.blackbox.utils.Slog;
 import top.niunaijun.blackbox.utils.compat.BuildCompat;
 
 
+/**
+ * MIUI/HyperOS 安全服务代理：
+ * - 通过反射获取 miui.security.ISecurityManager 并替换系统服务；
+ * - 隐私/运行控制/权限/通知/游戏模式等接口统一返回宽松默认值，避免 ROM 策略导致不兼容；
+ * - 仅在 MIUI/HyperOS 环境启用。
+ */
 public class IMiuiSecurityManagerProxy extends BinderInvocationStub {
     public static final String TAG = "MiuiSecurityManagerProxy";
     private static final String SERVICE_NAME = "miui.security.SecurityManager";

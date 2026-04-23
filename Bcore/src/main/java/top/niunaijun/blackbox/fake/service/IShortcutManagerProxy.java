@@ -17,6 +17,11 @@ import top.niunaijun.blackbox.utils.MethodParameterUtils;
 import top.niunaijun.blackbox.utils.compat.ParceledListSliceCompat;
 
 
+/**
+ * ShortcutManager 代理：
+ * - 替换快捷方式服务，统一包名修正，常用方法直接返回成功或空集；
+ * - requestPinShortcut/set/add 动态快捷方式等默认放行，提升兼容性。
+ */
 public class IShortcutManagerProxy extends BinderInvocationStub {
 
     public IShortcutManagerProxy() {

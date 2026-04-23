@@ -1,5 +1,8 @@
 package top.niunaijun.blackbox.utils;
 
+/**
+ * 堆栈过滤器：安装全局异常处理器，过滤掉含 xposed/epic/virtual/blackbox/hook 等关键词的帧。
+ */
 public class StackTraceFilter {
     static {
         install();

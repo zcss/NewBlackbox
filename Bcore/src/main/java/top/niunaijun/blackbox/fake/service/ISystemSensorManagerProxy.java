@@ -9,6 +9,12 @@ import top.niunaijun.blackbox.utils.Slog;
 import top.niunaijun.blackbox.utils.AttributionSourceUtils;
 
 
+/**
+ * SystemSensorManager 代理：
+ * - 构造/解析调用前修正 AttributionSource/UID，避免 UID 不匹配；
+ * - 异常时创建安全占位传感器管理器，或返回空列表，防止崩溃。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class ISystemSensorManagerProxy extends ClassInvocationStub {
     public static final String TAG = "ISystemSensorManagerProxy";
 

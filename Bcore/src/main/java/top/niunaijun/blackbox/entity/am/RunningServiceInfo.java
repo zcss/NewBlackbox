@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * 运行中Service信息集合：封装系统RunningServiceInfo列表。
+ */
 public class RunningServiceInfo implements Parcelable {
     public List<ActivityManager.RunningServiceInfo> mRunningServiceInfoList;
 

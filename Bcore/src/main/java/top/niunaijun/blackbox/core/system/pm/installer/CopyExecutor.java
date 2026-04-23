@@ -11,6 +11,9 @@ import top.niunaijun.blackbox.utils.FileUtils;
 import top.niunaijun.blackbox.utils.NativeUtils;
 
 
+/**
+ * 拷贝阶段：复制/重命名APK到沙盒目录，必要时复制native库，更新baseCodePath。
+ */
 public class CopyExecutor implements Executor {
 
     @Override

@@ -23,6 +23,9 @@ import top.niunaijun.blackbox.entity.pm.InstallOption;
 import top.niunaijun.blackbox.utils.compat.BuildCompat;
 
 
+/**
+ * 包模型：镜像 PackageParser.Package，承载组件/权限/签名等以便于沙盒内解析与序列化传输。
+ */
 public class BPackage implements Parcelable {
     public ArrayList<Activity> activities = new ArrayList<Activity>(0);
     public ArrayList<Activity> receivers = new ArrayList<Activity>(0);

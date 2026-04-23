@@ -8,6 +8,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * 身份认证代理：
+ * - 登录/鉴权/Token 获取等调用失败时返回占位结果（mock 用户/Token/成功标记），避免上层崩溃；
+ * - 正常路径透传，仅在异常分支兜底与记录日志。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class AuthenticationProxy extends ClassInvocationStub {
     public static final String TAG = "AuthenticationProxy";
 

@@ -9,6 +9,12 @@ import top.niunaijun.blackbox.fake.hook.MethodHook;
 import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 
 
+/**
+ * ApkAssets 代理：
+ * - 拦截 loadOverlayFromPath/nativeLoad，过滤 resource-cache/@idmap/.frro/systemui 等已知问题路径；
+ * - 通过抛出异常/直接拦截，避免加载异常资源包引发崩溃；
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class ApkAssetsProxy extends ClassInvocationStub {
     public static final String TAG = "ApkAssetsProxy";
 

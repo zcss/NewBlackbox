@@ -10,6 +10,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * MediaRecorder 代理：
+ * - 记录关键配置/生命周期调用（构造、set*、prepare/start/stop/release/reset），默认放行；
+ * - 仅用于日志与问题排查，不改变录音行为。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class MediaRecorderProxy extends ClassInvocationStub {
     public static final String TAG = "MediaRecorderProxy";
 

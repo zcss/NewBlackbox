@@ -13,6 +13,12 @@ import top.niunaijun.blackbox.utils.MethodParameterUtils;
 import top.niunaijun.blackbox.utils.compat.BuildCompat;
 
 
+/**
+ * Vibrator(VibratorManager) 代理：
+ * - 按版本选择服务名并替换；统一首个 UID/包名参数，避免跨进程校验问题；
+ * - 透明透传其余行为，保持振动效果不受影响。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IVibratorServiceProxy extends BinderInvocationStub {
     private static String NAME;
     static {

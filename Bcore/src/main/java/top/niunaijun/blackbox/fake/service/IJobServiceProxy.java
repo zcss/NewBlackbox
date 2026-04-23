@@ -17,6 +17,12 @@ import top.niunaijun.blackbox.utils.Slog;
 import top.niunaijun.blackbox.utils.UIDSpoofingHelper;
 
 
+/**
+ * JobScheduler 代理：
+ * - 替换 jobscheduler 服务；对 schedule/enqueue/cancel 进行适配，尝试交由 BJobManager 包装 JobInfo；
+ * - UID 校验失败或非 JobInfo 调用时提供兜底/回退，降低崩溃概率。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IJobServiceProxy extends BinderInvocationStub {
     public static final String TAG = "JobServiceStub";
 

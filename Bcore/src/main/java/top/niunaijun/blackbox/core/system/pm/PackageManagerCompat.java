@@ -35,6 +35,9 @@ import top.niunaijun.blackbox.utils.compat.BuildCompat;
 
 
 @SuppressLint({"SdCardPath", "NewApi"})
+/**
+ * PM 兼容适配：从BPackage/BPackageSettings按flags与用户态生成系统AI/PI/组件信息，加载包资源与修正共享库。
+ */
 public class PackageManagerCompat {
 
     public static PackageInfo generatePackageInfo(BPackageSettings ps, int flags, BPackageUserState state, int userId) {

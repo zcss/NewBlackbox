@@ -15,6 +15,9 @@ import black.android.content.BroadcastReceiverPendingResultMContext;
 import top.niunaijun.blackbox.utils.compat.BuildCompat;
 
 
+/**
+ * 广播PendingResult镜像：序列化系统PendingResult关键字段以跨进程传递。
+ */
 public class PendingResultData implements Parcelable {
     public int mType;
     public boolean mOrderedHint;

@@ -13,6 +13,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * AttributionSource 代理：
+ * - 构造与反序列化时修正 UID/包名为宿主，拦截 enforce* 校验避免 UID 不一致崩溃；
+ * - 兼容多版本构造签名，必要时创建安全占位对象。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IAttributionSourceProxy extends ClassInvocationStub {
     public static final String TAG = "IAttributionSourceProxy";
 

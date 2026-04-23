@@ -13,15 +13,22 @@ import top.niunaijun.blackboxa.view.base.BaseViewModel;
 
 import java.util.List;
 
+/**
+ * 虚拟定位 ViewModel：负责列表获取、模式设置与坐标更新。
+ */
 public class FakeLocationViewModel extends BaseViewModel {
+    /** 数据仓库。*/
     private final FakeLocationRepository mRepo;
 
+    /** 虚拟定位页面数据。*/
     private final MutableLiveData<List<FakeLocationBean>> appsLiveData = new MutableLiveData<>();
 
+    /** 注入数据仓库。*/
     public FakeLocationViewModel(FakeLocationRepository repo) {
         this.mRepo = repo;
     }
 
+    /** 获取页面 LiveData。*/
     public MutableLiveData<List<FakeLocationBean>> getAppsLiveData() {
         return appsLiveData;
     }

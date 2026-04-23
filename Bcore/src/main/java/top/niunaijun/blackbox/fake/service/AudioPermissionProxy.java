@@ -13,6 +13,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * Audio 权限与录音行为代理：
+ * - 替换 audio 服务，统一麦克风静音查询为 false，并在 set* 时强制取消静音，避免被动禁录；
+ * - 其他音频控制/焦点/音量相关接口默认透传，仅增强日志。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class AudioPermissionProxy extends BinderInvocationStub {
     public static final String TAG = "AudioPermissionProxy";
 

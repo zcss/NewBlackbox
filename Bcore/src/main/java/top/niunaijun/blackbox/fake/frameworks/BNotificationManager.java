@@ -13,6 +13,12 @@ import top.niunaijun.blackbox.core.system.ServiceManager;
 import top.niunaijun.blackbox.core.system.notification.IBNotificationManagerService;
 
 
+/**
+ * 通知框架代理：
+ * - 封装渠道/分组创建删除、入队/取消通知等接口到 IBNotificationManagerService；
+ * - 默认返回安全集合或空值，避免远程异常影响调用侧。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class BNotificationManager extends BlackManager<IBNotificationManagerService> {
     private static final BNotificationManager sNotificationManager = new BNotificationManager();
 

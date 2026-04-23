@@ -6,6 +6,9 @@ import top.niunaijun.blackbox.entity.pm.InstallOption;
 import top.niunaijun.blackbox.utils.FileUtils;
 
 
+/**
+ * 移除应用阶段：删除包级 data/app 目录。
+ */
 public class RemoveAppExecutor implements Executor {
     @Override
     public int exec(BPackageSettings ps, InstallOption option, int userId) {

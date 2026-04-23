@@ -20,13 +20,14 @@ import top.niunaijun.blackboxa.bean.AppInfo;
 import top.niunaijun.blackboxa.databinding.ItemAppBinding;
 
 /**
- * App 图标列表
+ * 应用图标列表适配器：负责创建并绑定应用项的 ViewHolder。
  */
 public class AppsAdapter extends RVHolderFactory {
     private static final String TAG = "AppsAdapter";
     private static final int MAX_ICON_SIZE = 96;
     private static final int DEFAULT_ICON_COLOR = Color.parseColor("#CCCCCC");
 
+    /** 创建 ViewHolder。*/
     @Override
     public RVHolder<?> createViewHolder(ViewGroup parent, int viewType, Object item) {
         try {
@@ -37,6 +38,7 @@ public class AppsAdapter extends RVHolderFactory {
         }
     }
 
+    /** 正常项 ViewHolder。*/
     static class AppsVH extends RVHolder<AppInfo> {
         final ItemAppBinding binding;
         private Drawable currentIcon;
@@ -60,6 +62,7 @@ public class AppsAdapter extends RVHolderFactory {
             }
         }
 
+        /** 绑定应用名称、图标与角标状态。*/
         @Override
         public void setContent(AppInfo item, boolean isSelected, Object payload) {
             try {
@@ -126,6 +129,7 @@ public class AppsAdapter extends RVHolderFactory {
         }
     }
 
+    /** 兜底项 ViewHolder（创建失败或异常时使用）。*/
     static class FallbackAppsVH extends RVHolder<AppInfo> {
         final ItemAppBinding binding;
         FallbackAppsVH(@NonNull View itemView) {

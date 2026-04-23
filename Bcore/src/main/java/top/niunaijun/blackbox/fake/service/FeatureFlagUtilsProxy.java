@@ -9,6 +9,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * FeatureFlagUtils 代理：
+ * - 读取特性开关时若出现 UID 不匹配等异常，返回宽松默认值（true/1/"true" 等）；
+ * - 不影响正常读取路径，仅在异常分支兜底。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class FeatureFlagUtilsProxy extends ClassInvocationStub {
     public static final String TAG = "FeatureFlagUtilsProxy";
 

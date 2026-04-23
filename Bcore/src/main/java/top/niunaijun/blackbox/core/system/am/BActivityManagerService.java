@@ -31,6 +31,9 @@ import top.niunaijun.blackbox.utils.Slog;
 import static android.content.pm.PackageManager.GET_META_DATA;
 
 
+/**
+ * 虚拟AMS：按用户隔离管理Activity/Service/Broadcast，负责进程拉起、任务栈维护与广播调度。
+ */
 public class BActivityManagerService extends IBActivityManagerService.Stub implements ISystemService {
     public static final String TAG = "BActivityManagerService";
     private static final BActivityManagerService sService = new BActivityManagerService();

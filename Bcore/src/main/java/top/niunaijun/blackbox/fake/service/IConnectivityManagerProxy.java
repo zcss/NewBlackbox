@@ -23,6 +23,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * ConnectivityManager 代理：
+ * - 替换系统网络服务，优先透传结果，必要时构造 NetworkInfo/Network/Capabilities/LinkProperties 兜底；
+ * - 关闭/放宽私有 DNS 与网络校验，保障沙盒内联网可用；
+ * - 扫描注册 VpnCommonProxy 以统一处理 VPN 相关差异。
+ */
 @ScanClass(VpnCommonProxy.class)
 public class IConnectivityManagerProxy extends BinderInvocationStub {
     public static final String TAG = "IConnectivityManagerProxy";

@@ -30,6 +30,9 @@ import top.niunaijun.blackbox.proxy.record.ProxyServiceRecord;
 
 
 @SuppressLint("NewApi")
+/**
+ * 活动Service管理：解析/拉起目标Service，维护RunningServiceRecord与连接计数，桥接到宿主代理Service。
+ */
 public class ActiveServices {
     public static final String TAG = "ActiveServices";
 

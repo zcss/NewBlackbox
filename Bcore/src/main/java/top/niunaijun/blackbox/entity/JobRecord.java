@@ -8,6 +8,9 @@ import android.os.Parcelable;
 
 
 
+/**
+ * JobService记录：持有JobInfo与ServiceInfo，以及运行期的JobService实例引用。
+ */
 public class JobRecord implements Parcelable {
 
     public JobInfo mJobInfo;

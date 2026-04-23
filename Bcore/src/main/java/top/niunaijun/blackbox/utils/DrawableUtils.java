@@ -6,6 +6,9 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
+/**
+ * Drawable 工具：将 Drawable 转为指定大小的 Bitmap（按透明度选择合适的像素格式）。
+ */
 public class DrawableUtils {
     public static Bitmap drawableToBitmap(Drawable drawable, int width, int height) {
         if (drawable == null)

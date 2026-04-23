@@ -5,6 +5,9 @@ import java.util.Locale;
 import top.niunaijun.blackbox.BlackBoxCore;
 
 
+/**
+ * 代理清单工具：统一生成宿主侧代理组件类名/authority与虚拟进程名（:pN）。
+ */
 public class ProxyManifest {
     public static final int FREE_COUNT = 50;
 

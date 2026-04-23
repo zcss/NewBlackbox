@@ -7,6 +7,9 @@ import android.os.IBinder;
 import top.niunaijun.blackbox.utils.compat.BundleCompat;
 
 
+/**
+ * 代理Service记录：封装目标Service的Intent/ServiceInfo/Token/userId/startId，用于宿主代理与沙盒通信。
+ */
 public class ProxyServiceRecord {
     public Intent mServiceIntent;
     public ServiceInfo mServiceInfo;

@@ -13,6 +13,12 @@ import top.niunaijun.blackbox.core.system.ServiceManager;
 import top.niunaijun.blackbox.core.system.accounts.IBAccountManagerService;
 
 
+/**
+ * 账户框架代理：
+ * - 封装 IBAccountManagerService 的 Binder 调用，提供按用户隔离的账户读写/鉴权/可见性管理；
+ * - 远程异常时返回安全默认值或空结果，避免调用方崩溃。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class BAccountManager extends BlackManager<IBAccountManagerService> {
     private static final BAccountManager sBAccountManager = new BAccountManager();
 

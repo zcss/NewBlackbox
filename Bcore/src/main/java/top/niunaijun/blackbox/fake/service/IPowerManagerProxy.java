@@ -8,6 +8,12 @@ import top.niunaijun.blackbox.fake.hook.BinderInvocationStub;
 import top.niunaijun.blackbox.fake.service.base.ValueMethodProxy;
 
 
+/**
+ * PowerManager 代理：
+ * - 替换电源服务；对唤醒锁相关接口返回安全默认值，避免无权限/错误参数导致异常；
+ * - 其他行为透传。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IPowerManagerProxy extends BinderInvocationStub {
     public IPowerManagerProxy() {
         super(BRServiceManager.get().getService(Context.POWER_SERVICE));

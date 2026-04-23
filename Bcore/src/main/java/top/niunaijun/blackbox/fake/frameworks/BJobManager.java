@@ -9,6 +9,12 @@ import top.niunaijun.blackbox.core.system.am.IBJobManagerService;
 import top.niunaijun.blackbox.entity.JobRecord;
 
 
+/**
+ * 任务调度框架代理：
+ * - 提供 schedule/cancel/query 等接口到 IBJobManagerService；
+ * - 远程异常返回空/缺省值，保证调用侧稳态。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class BJobManager extends BlackManager<IBJobManagerService> {
     private static final BJobManager sJobManager = new BJobManager();
 

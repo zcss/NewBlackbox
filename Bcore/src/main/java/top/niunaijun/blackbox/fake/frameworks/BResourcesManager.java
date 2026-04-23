@@ -18,6 +18,12 @@ import top.niunaijun.blackbox.fake.hook.MethodHook;
 import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 
 
+/**
+ * 资源框架代理：
+ * - 资源/图标/标签的安全加载工具，遇异常回退到包名/空对象；
+ * - 提供创建安全 ResourcesManager 与问题 overlay 路径识别。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class BResourcesManager implements IInjectHook {
     private static final String TAG = "BResourcesManager";
 

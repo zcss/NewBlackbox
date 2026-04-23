@@ -7,8 +7,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import top.niunaijun.blackbox.BlackBoxCore;
 
+/**
+ * 快捷方式启动页：读取包名与用户 ID 后后台拉起目标 App。
+ */
 public class ShortcutActivity extends AppCompatActivity {
     @Override
+    /** 后台线程调用 BlackBoxCore.launchApk，完成后关闭当前页。*/
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

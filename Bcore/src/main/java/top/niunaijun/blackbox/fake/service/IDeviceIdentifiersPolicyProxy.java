@@ -12,6 +12,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Md5Utils;
 
 
+/**
+ * DeviceIdentifiersPolicy 代理：
+ * - 替换 device_identifiers 服务；getSerialForPackage 返回基于宿主包名的 MD5 序列号；
+ * - 隔离真实设备序列号，降低隐私与兼容性风险。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IDeviceIdentifiersPolicyProxy extends BinderInvocationStub {
 
     public IDeviceIdentifiersPolicyProxy() {

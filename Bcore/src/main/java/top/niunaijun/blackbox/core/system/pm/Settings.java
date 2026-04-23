@@ -25,6 +25,9 @@ import top.niunaijun.blackbox.utils.Slog;
 import top.niunaijun.blackbox.utils.compat.PackageParserCompat;
 
 
+/**
+ * 包设置存储：分配/持久化 appId，扫描/加载 package.conf，处理系统包路径漂移并触发重装。
+ */
  class Settings {
     public static final String TAG = "Settings";
 

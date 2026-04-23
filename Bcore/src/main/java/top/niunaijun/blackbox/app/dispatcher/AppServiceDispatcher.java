@@ -20,6 +20,9 @@ import static android.app.Service.START_NOT_STICKY;
 
 
 
+/**
+ * 虚拟Service分发器：负责在沙盒进程内创建、缓存并分发目标Service的生命周期回调。
+ */
 public class AppServiceDispatcher {
     public static final String TAG = "AppServiceDispatcher";
 
@@ -33,6 +36,7 @@ public class AppServiceDispatcher {
 
     private final Handler mHandler = BlackBoxCore.get().getHandler();
 
+    /** 处理bindService：创建或复用Service，转发onBind并缓存IBinder */
     public IBinder onBind(Intent proxyIntent) {
         ProxyServiceRecord serviceRecord = ProxyServiceRecord.create(proxyIntent);
         Intent intent = serviceRecord.mServiceIntent;
@@ -68,6 +72,7 @@ public class AppServiceDispatcher {
         return null;
     }
 
+    /** 处理startService：分发到目标Service并通知虚拟AMS */
     public int onStartCommand(Intent proxyIntent, int flags, int startId) {
         ProxyServiceRecord stubRecord = ProxyServiceRecord.create(proxyIntent);
         if (stubRecord.mServiceIntent == null || stubRecord.mServiceInfo == null) {
@@ -144,6 +149,7 @@ public class AppServiceDispatcher {
         
     }
 
+    /** 处理unbindService：按连接计数决定是否销毁Service */
     public boolean onUnbind(Intent proxyIntent) {
         ProxyServiceRecord stubRecord = ProxyServiceRecord.create(proxyIntent);
         if (stubRecord.mServiceIntent == null || stubRecord.mServiceInfo == null) {
@@ -181,6 +187,7 @@ public class AppServiceDispatcher {
         return false;
     }
 
+    /** 查询已绑定的IBinder，不触发生命周期 */
     public IBinder peekService(Intent intent) {
         ServiceRecord record = findRecord(intent);
         if (record == null) {
@@ -189,6 +196,7 @@ public class AppServiceDispatcher {
         return record.getBinder(intent);
     }
 
+    /** 主动停止Service：根据startId决定是否调用onDestroy并从缓存移除 */
     public void stopService(Intent intent) {
         if (intent == null)
             return;

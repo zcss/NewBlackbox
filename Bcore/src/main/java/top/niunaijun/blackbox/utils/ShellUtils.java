@@ -6,53 +6,45 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
+/**
+ * Shell 调用工具：以 su/sh 执行命令，支持批量与返回标准输出。
+ */
 public class ShellUtils {
     public static final String COMMAND_SU = "su";
     public static final String COMMAND_SH = "sh";
     public static final String COMMAND_EXIT = "exit\n";
     public static final String COMMAND_LINE_END = "\n";
 
-
     private ShellUtils() {
         throw new AssertionError();
     }
 
-
-    
+    /** 检查 root 权限（通过 su 执行 echo）。 */
     public static boolean checkRootPermission() {
         return execCommand("echo root", true, false).result == 0;
     }
 
-
-    
     public static CommandResult execCommand(String command, boolean isRoot) {
         return execCommand(new String[]{command}, isRoot, true);
     }
 
-
-    
     public static CommandResult execCommand(List<String> commands, boolean isRoot) {
         return execCommand(commands == null ? null : commands.toArray(new String[]{}), isRoot, true);
     }
 
-    
     public static CommandResult execCommand(String[] commands, boolean isRoot) {
         return execCommand(commands, isRoot, true);
     }
 
-
-    
     public static CommandResult execCommand(String command, boolean isRoot, boolean isNeedResultMsg) {
         return execCommand(new String[]{command}, isRoot, isNeedResultMsg);
     }
 
-
-    
     public static CommandResult execCommand(List<String> commands, boolean isRoot, boolean isNeedResultMsg) {
         return execCommand(commands == null ? null : commands.toArray(new String[]{}), isRoot, isNeedResultMsg);
     }
 
-    
+    /** 执行命令数组，isRoot 控制 su/sh，返回结果码与可选输出。 */
     public static CommandResult execCommand(String[] commands, boolean isRoot, boolean isNeedResultMsg) {
         int result = -1;
         if (commands == null || commands.length == 0) {
@@ -106,22 +98,13 @@ public class ShellUtils {
         return new CommandResult(result, successMsg == null ? null : successMsg.toString());
     }
 
-
-    
     public static class CommandResult {
-
-
-        
         public int result;
-        
         public String successMsg;
-
-
 
         public CommandResult(int result) {
             this.result = result;
         }
-
 
         public CommandResult(int result, String successMsg) {
             this.result = result;

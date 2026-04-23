@@ -8,6 +8,9 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+/**
+ * 标注单个代理方法名，用于将 MethodHook 绑定到指定方法。
+ */
 public @interface ProxyMethod {
     String value();
 }

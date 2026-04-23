@@ -9,6 +9,12 @@ import top.niunaijun.blackbox.utils.Slog;
 import top.niunaijun.blackbox.utils.AttributionSourceUtils;
 
 
+/**
+ * IContentProvider 代理（按方法拦截）：
+ * - 在 query/insert/update/delete/call 等入口修复 AttributionSource，消除 UID 不匹配；
+ * - 对 SecurityException（Calling uid mismatch）做安全返回，避免崩溃；其余透传。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IContentProviderProxy extends ClassInvocationStub {
     public static final String TAG = "IContentProviderProxy";
 

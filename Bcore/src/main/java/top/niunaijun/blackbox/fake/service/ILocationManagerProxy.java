@@ -23,6 +23,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.MethodParameterUtils;
 
 
+/**
+ * LocationManager 代理：
+ * - 替换定位服务，按需用 BLocationManager 返回虚拟位置/监听注册，或透传系统；
+ * - 针对 GMS 特定方法进行屏蔽以避免崩溃；
+ * - getAllProviders/isProviderEnabled 等返回稳定可用的最小集合与状态。
+ */
 public class ILocationManagerProxy extends BinderInvocationStub {
     public static final String TAG = "ILocationManagerProxy";
 

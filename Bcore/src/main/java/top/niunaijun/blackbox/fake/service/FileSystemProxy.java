@@ -9,6 +9,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * File 系统代理：
+ * - 拦截 mkdirs/mkdir/isDirectory，对 Helium Crashpad/CrashReporter 等路径返回宽松结果，避免目录校验导致崩溃；
+ * - 其他路径透传原生行为，异常时提供保守默认值。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class FileSystemProxy extends ClassInvocationStub {
     public static final String TAG = "FileSystemProxy";
 

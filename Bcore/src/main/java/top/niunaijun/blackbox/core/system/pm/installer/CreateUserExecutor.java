@@ -6,6 +6,9 @@ import top.niunaijun.blackbox.entity.pm.InstallOption;
 import top.niunaijun.blackbox.utils.FileUtils;
 
 
+/**
+ * 用户数据阶段：为指定 userId 建立 dataDir/files/cache/databases 与 deData 目录。
+ */
 public class CreateUserExecutor implements Executor {
 
     @Override

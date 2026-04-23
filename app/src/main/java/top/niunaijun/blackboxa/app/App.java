@@ -6,13 +6,17 @@ import android.util.Log;
 
 import top.niunaijun.blackbox.BlackBoxCore;
 
+/** BlackBoxA 应用主入口。*/
 public class App extends Application {
+    /** attachBaseContext 后缓存的全局 Context。*/
     private static volatile Context mContext;
 
+    /** 获取全局 Context。*/
     public static Context getContext() {
         return mContext;
     }
 
+    /** 绑定 BlackBoxCore 生命周期并尽早缓存 base Context。*/
     @Override
     protected void attachBaseContext(Context base) {
         try {
@@ -51,6 +55,7 @@ public class App extends Application {
         }
     }
 
+    /** 调用 AppManager 完成应用级初始化。*/
     @Override
     public void onCreate() {
         try {

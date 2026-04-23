@@ -11,6 +11,11 @@ import top.niunaijun.blackbox.fake.hook.MethodHook;
 import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 
 
+/**
+ * AlarmManager 代理：
+ * - 代理系统闹钟服务，替换到 ServiceManager 缓存；
+ * - 对 set 等方法可按需返回默认值，避免跨进程定时导致的异常。
+ */
 public class IAlarmManagerProxy extends BinderInvocationStub {
 
     public IAlarmManagerProxy() {

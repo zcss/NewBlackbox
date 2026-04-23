@@ -23,6 +23,11 @@ import top.niunaijun.blackbox.utils.compat.BuildCompat;
 import top.niunaijun.blackbox.utils.compat.ParceledListSliceCompat;
 
 
+/**
+ * NotificationManager 代理：
+ * - 注入并替换通知服务，统一修正包名参数；
+ * - 在虚拟侧维护渠道/组与通知入队/取消，避免系统侧校验导致异常。
+ */
 public class INotificationManagerProxy extends BinderInvocationStub {
     public static final String TAG = "INotificationManagerProxy";
 

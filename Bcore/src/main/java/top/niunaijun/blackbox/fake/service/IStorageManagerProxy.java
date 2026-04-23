@@ -16,6 +16,11 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.compat.BuildCompat;
 
 
+/**
+ * StorageManager/Mount 代理：
+ * - 替换存储挂载服务，getVolumeList 从虚拟存储管理返回卷信息；
+ * - mkdirs 等写操作按需返回安全默认值，避免系统层越权与异常。
+ */
 public class IStorageManagerProxy extends BinderInvocationStub {
 
     public IStorageManagerProxy() {

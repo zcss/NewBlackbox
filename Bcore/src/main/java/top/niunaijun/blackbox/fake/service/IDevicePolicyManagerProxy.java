@@ -13,6 +13,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.MethodParameterUtils;
 
 
+/**
+ * DevicePolicyManager 代理：
+ * - 替换 DPM 服务；统一修正首个包名参数，返回宽松默认设备/配置状态；
+ * - 设备/配置所有者名称回退为 BlackBox，避免 ROM/企业策略导致不兼容。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IDevicePolicyManagerProxy extends BinderInvocationStub {
     public IDevicePolicyManagerProxy() {
         super(BRServiceManager.get().getService(Context.DEVICE_POLICY_SERVICE));

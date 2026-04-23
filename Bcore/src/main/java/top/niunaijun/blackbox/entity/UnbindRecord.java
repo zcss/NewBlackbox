@@ -5,6 +5,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 
+/**
+ * unbind统计记录：用于决定Service是否销毁及回传给AMS的必要信息。
+ */
 public class UnbindRecord implements Parcelable {
     private int mBindCount;
     private int mStartId;

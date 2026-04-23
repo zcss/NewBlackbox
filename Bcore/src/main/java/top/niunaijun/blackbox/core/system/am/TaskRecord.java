@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 
+/**
+ * 任务记录：管理某个Task内的Activity列表与finished状态，用于判定是否需要新任务。
+ */
 public class TaskRecord {
     public int id;
     public int userId;

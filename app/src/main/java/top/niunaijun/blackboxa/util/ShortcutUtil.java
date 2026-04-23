@@ -20,9 +20,18 @@ import top.niunaijun.blackboxa.app.AppManager;
 import top.niunaijun.blackboxa.bean.AppInfo;
 import top.niunaijun.blackboxa.view.main.ShortcutActivity;
 
+/**
+ * 桌面快捷方式工具：创建应用快捷方式并引导权限设置。
+ */
 public final class ShortcutUtil {
     private ShortcutUtil() {}
 
+    /**
+     * 创建应用桌面快捷方式（支持自定义名称）。
+     * @param context 上下文
+     * @param userID 用户 ID
+     * @param info 应用信息
+     */
     public static void createShortcut(Context context, int userID, AppInfo info) {
         if (context == null || info == null) return;
 
@@ -64,6 +73,7 @@ public final class ShortcutUtil {
         }
     }
 
+    /** 引导用户开启桌面快捷方式相关权限或设置。*/
     private static void showAllowPermissionDialog(Context context) {
         try {
             if (!AppManager.getMBlackBoxLoader().showShortcutPermissionDialog()) {
@@ -84,6 +94,9 @@ public final class ShortcutUtil {
         }
     }
 
+    /**
+     * 确保将 Drawable 转换为指定尺寸的 Bitmap（为空时使用灰背景）。
+     */
     private static Bitmap ensureBitmap(Drawable drawable, int width, int height) {
         if (drawable instanceof BitmapDrawable) {
             Bitmap bmp = ((BitmapDrawable) drawable).getBitmap();

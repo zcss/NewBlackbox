@@ -12,6 +12,13 @@ import top.niunaijun.blackbox.BlackBoxCore;
 import top.niunaijun.blackbox.utils.Reflector;
 
 
+/**
+ * 虚拟框架管理基类：
+ * - 基于服务名从 BlackBoxCore 获取 Binder，并通过 $Stub.asInterface 构建接口；
+ * - 内置 binder 健康检查、linkToDeath 监听与创建节流；
+ * - 提供清缓存与健康探测，供各 B*Manager 复用。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public abstract class BlackManager<Service extends IInterface> {
     public static final String TAG = "BlackManager";
 

@@ -17,6 +17,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * AccountManager 代理：
+ * - 替换账户服务，所有账户相关查询/修改转发到 BAccountManager 虚拟实现；
+ * - 支持可见性/鉴权/数据读写等常见接口，避免系统真实账户对宿主造成影响。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IAccountManagerProxy extends BinderInvocationStub {
     public static final String TAG = "IAccountManagerProxy";
 

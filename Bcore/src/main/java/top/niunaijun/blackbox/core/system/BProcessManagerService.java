@@ -34,6 +34,9 @@ import top.niunaijun.blackbox.utils.compat.BundleCompat;
 import top.niunaijun.blackbox.utils.provider.ProviderCall;
 
 
+/**
+ * 进程管理服务：负责为指定user/package/processName分配/复用虚拟进程，连接客户端IBActivityThread，维护进程表与清理。
+ */
 public class BProcessManagerService implements ISystemService {
     public static final String TAG = "BProcessManager";
 
@@ -46,6 +49,7 @@ public class BProcessManagerService implements ISystemService {
         return sBProcessManagerService;
     }
 
+    /** 启动或复用进程：必要时选择空闲bpid，初始化客户端并建立连接 */
     public ProcessRecord startProcessLocked(String packageName, String processName, int userId, int bpid, int callingPid) {
         ApplicationInfo info = BPackageManagerService.get().getApplicationInfo(packageName, 0, userId);
         if (info == null)
@@ -99,6 +103,7 @@ public class BProcessManagerService implements ISystemService {
         return app;
     }
 
+    /** 扫描宿主进程名占用，返回可用bpid；无可用时返回-1 */
     private int getUsingBPidL() {
         ActivityManager manager = (ActivityManager) BlackBoxCore.getContext().getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = manager.getRunningAppProcesses();
@@ -146,6 +151,7 @@ public class BProcessManagerService implements ISystemService {
         return -1;
     }
 
+    /** 初始化客户端进程：通过ContentProvider握手，拿到ApplicationThread Binder并创建/proc节点 */
     private boolean initAppProcessL(ProcessRecord record) {
         Log.d(TAG, "initProcess: " + record.processName);
         AppConfig appConfig = record.getClientConfig();
@@ -162,6 +168,7 @@ public class BProcessManagerService implements ISystemService {
         return true;
     }
 
+    /** 连接客户端：监听死亡，保存IBActivityThread与IApplicationThread引用并释放等待锁 */
     private void attachClientL(final ProcessRecord app, final IBinder appThread) {
         IBActivityThread activityThread = IBActivityThread.Stub.asInterface(appThread);
         if (activityThread == null) {
@@ -189,6 +196,7 @@ public class BProcessManagerService implements ISystemService {
         app.initLock.open();
     }
 
+    /** 进程死亡清理：移除记录、删除/proc目录、清理通知 */
     public void onProcessDie(ProcessRecord record) {
         synchronized (mProcessLock) {
             record.kill();
@@ -206,6 +214,7 @@ public class BProcessManagerService implements ISystemService {
         }
     }
 
+    /** 查询指定user下指定包与进程名的记录 */
     public ProcessRecord findProcessRecord(String packageName, String processName, int userId) {
         synchronized (mProcessMap) {
             int appId = BPackageManagerService.get().getAppId(packageName);
@@ -217,6 +226,7 @@ public class BProcessManagerService implements ISystemService {
         }
     }
 
+    /** 杀掉所有属于某包的进程（按appId匹配） */
     public void killAllByPackageName(String packageName) {
         synchronized (mProcessLock) {
             synchronized (mPidsSelfLocked) {
@@ -236,6 +246,7 @@ public class BProcessManagerService implements ISystemService {
         }
     }
 
+    /** 杀掉指定用户下某包的全部进程 */
     public void killPackageAsUser(String packageName, int userId) {
         synchronized (mProcessLock) {
             int buid = BUserHandle.getUid(userId, BPackageManagerService.get().getAppId(packageName));
@@ -260,6 +271,7 @@ public class BProcessManagerService implements ISystemService {
         }
     }
 
+    /** 根据pid或包名计算虚拟AppId */
     public int getBUidByPidOrPackageName(int pid, String packageName) {
         ProcessRecord callingProcess = findProcessByPid(pid);
         if (callingProcess == null) {

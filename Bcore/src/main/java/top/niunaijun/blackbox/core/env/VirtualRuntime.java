@@ -5,6 +5,9 @@ import android.content.pm.ApplicationInfo;
 import black.android.ddm.BRDdmHandleAppName;
 import black.android.os.BRProcess;
 
+/**
+ * 虚拟运行时：记录初始包名/进程名，并向底层设置进程标识与DDMS应用名。
+ */
 public class VirtualRuntime {
 
     private static String sInitialPackageName;

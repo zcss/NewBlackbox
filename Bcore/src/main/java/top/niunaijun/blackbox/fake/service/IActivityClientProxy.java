@@ -16,6 +16,13 @@ import top.niunaijun.blackbox.utils.compat.TaskDescriptionCompat;
 
 
 @ScanClass(ActivityManagerCommonProxy.class)
+/**
+ * IActivityClient 代理：
+ * - 替换 ActivityClient 接口单例，拦截 finishActivity/activityResumed/activityDestroyed 等回调；
+ * - 与 BActivityManager 协作维护虚拟任务栈；
+ * - 修正 setTaskDescription 在不同版本上的字段差异。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IActivityClientProxy extends ClassInvocationStub {
     public static final String TAG = "IActivityClientProxy";
     private final Object who;

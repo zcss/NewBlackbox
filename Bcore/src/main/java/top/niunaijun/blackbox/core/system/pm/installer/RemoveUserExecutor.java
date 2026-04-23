@@ -6,6 +6,9 @@ import top.niunaijun.blackbox.entity.pm.InstallOption;
 import top.niunaijun.blackbox.utils.FileUtils;
 
 
+/**
+ * 移除用户阶段：清理指定 userId 的 data 与 external data 目录。
+ */
 public class RemoveUserExecutor implements Executor {
 
     @Override

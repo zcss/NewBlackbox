@@ -20,6 +20,13 @@ import top.niunaijun.blackbox.entity.am.RunningServiceInfo;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * 虚拟 AMS 框架代理：
+ * - 封装对 IBActivityManagerService 的 Binder 调用，提供重试与 DeadObject 处理；
+ * - 统一 Activity/Service/Provider/Broadcast 的入口；
+ * - 供各 Hook 代理在进程内调用。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class BActivityManager extends BlackManager<IBActivityManagerService> {
     private static final String TAG = "BActivityManager";
     private static final BActivityManager sActivityManager = new BActivityManager();

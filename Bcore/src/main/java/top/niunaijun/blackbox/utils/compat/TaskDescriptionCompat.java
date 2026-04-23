@@ -12,6 +12,9 @@ import top.niunaijun.blackbox.BlackBoxCore;
 import top.niunaijun.blackbox.app.BActivityThread;
 import top.niunaijun.blackbox.utils.DrawableUtils;
 
+/**
+ * 任务描述兼容：在必要时补齐 label（前缀 [B{userId}]），保持多用户/沙盒状态可见。
+ */
 public class TaskDescriptionCompat {
     public static ActivityManager.TaskDescription fix(ActivityManager.TaskDescription td) {
         String label = td.getLabel();
@@ -21,14 +24,6 @@ public class TaskDescriptionCompat {
             return td;
 
         label = getTaskDescriptionLabel(BlackBoxCore.getUserId(), getApplicationLabel());
-        
-        
-        
-        
-
-        
-        
-        
         td = new ActivityManager.TaskDescription(label, null, td.getPrimaryColor());
         return td;
     }
@@ -48,7 +43,6 @@ public class TaskDescriptionCompat {
 
     private static Drawable getApplicationIcon() {
         try {
-            
             return null;
         } catch (Exception ignore) {
             return null;

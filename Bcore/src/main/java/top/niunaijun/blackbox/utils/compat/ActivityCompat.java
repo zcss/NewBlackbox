@@ -20,11 +20,15 @@ import top.niunaijun.blackbox.BlackBoxCore;
 import top.niunaijun.blackbox.app.BActivityThread;
 import top.niunaijun.blackbox.utils.DrawableUtils;
 
-
+/**
+ * Activity 兼容修复：
+ * - 应用 Window 样式中壁纸/全屏标志；
+ * - 在 L+ 设置任务标签与图标（带用户前缀）。
+ */
 public class ActivityCompat {
 
     public static void fix(Activity activity) {
-        
+        // 触发 mActivityInfo 初始化，避免后续访问空指针
         BRActivity.get(activity).mActivityInfo();
 
         Context baseContext = activity.getBaseContext();

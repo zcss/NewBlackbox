@@ -16,6 +16,9 @@ import top.niunaijun.blackbox.utils.Slog;
 
 
 
+/**
+ * 组件解析器：维护四大组件与IntentFilter索引，提供查询/增删；按userId返回筛选结果。
+ */
 public class ComponentResolver {
     public static final String TAG = "ComponentResolver";
 

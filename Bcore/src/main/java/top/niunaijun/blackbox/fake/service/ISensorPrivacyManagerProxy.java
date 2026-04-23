@@ -12,6 +12,12 @@ import top.niunaijun.blackbox.utils.Reflector;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * SensorPrivacyManager 代理：
+ * - 通过多种反射路径获取接口并替换服务句柄；
+ * - isSensorPrivacyEnabled* 一律返回 false，避免传感器被全局禁用导致异常；
+ * - setSensorPrivacy* 透传，保证设置路径可用。
+ */
 public class ISensorPrivacyManagerProxy extends BinderInvocationStub {
     public static final String TAG = "SensorPrivacyProxy";
 

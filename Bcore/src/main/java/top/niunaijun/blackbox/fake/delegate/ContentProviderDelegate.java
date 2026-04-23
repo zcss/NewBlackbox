@@ -25,6 +25,12 @@ import top.niunaijun.blackbox.fake.service.context.providers.SystemProviderStub;
 import top.niunaijun.blackbox.utils.compat.BuildCompat;
 
 
+/**
+ * ContentProvider 代理安装与修复：
+ * - 将系统返回的 IContentProvider 包装为虚拟化的 Stub（按 authority 对系统/普通做区分）；
+ * - 初始化阶段遍历 ActivityThread.mProviderMap 进行批量替换；
+ * - 清理 Settings.* 的 NameValueCache，避免持有旧的 mContentProvider 引用导致越权/崩溃。
+ */
 public class ContentProviderDelegate {
     public static final String TAG = "ContentProviderDelegate";
     private static Set<String> sInjected = new HashSet<>();

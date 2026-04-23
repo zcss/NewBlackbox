@@ -10,6 +10,11 @@ import top.niunaijun.blackbox.fake.hook.BinderInvocationStub;
 import top.niunaijun.blackbox.utils.MethodParameterUtils;
 
 
+/**
+ * LauncherApps 代理：
+ * - 替换启动器服务，统一将调用中的首参包名修正为沙盒/宿主；
+ * - 保证桌面查询/固定等 API 在虚拟环境中稳定运行。
+ */
 public class ILauncherAppsProxy extends BinderInvocationStub {
 
     public ILauncherAppsProxy() {

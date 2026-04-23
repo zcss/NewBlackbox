@@ -12,6 +12,11 @@ import top.niunaijun.blackbox.app.BActivityThread;
 import top.niunaijun.blackbox.utils.compat.BuildCompat;
 
 
+/**
+ * FileProvider 工具：
+ * - 将文件 Uri 在 N+ 转换为受支持的 content Uri（通过虚拟存储管理获取）；
+ * - 遍历已注册 Provider，解析并还原真实 File 以进行路径级处理。
+ */
 public class FileProviderHandler {
 
     public static Uri convertFileUri(Context context, Uri uri) {

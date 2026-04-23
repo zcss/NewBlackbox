@@ -9,6 +9,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.MethodParameterUtils;
 
 
+/**
+ * PhoneSubInfo 代理：
+ * - 绑定替换 TelephonyManager.sIPhoneSubInfo；统一首包名参数；
+ * - 号码等敏感信息返回空，避免泄露与兼容性问题。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IPhoneSubInfoProxy extends ClassInvocationStub {
     public static final String TAG = "IPhoneSubInfoProxy";
 

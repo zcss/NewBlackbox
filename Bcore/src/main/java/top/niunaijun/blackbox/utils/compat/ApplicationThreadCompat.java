@@ -6,6 +6,9 @@ import android.os.IInterface;
 import black.android.app.BRApplicationThreadNative;
 import black.android.app.BRIApplicationThreadOreoStub;
 
+/**
+ * ApplicationThread 兼容封装：根据系统版本选择 asInterface 的实现。
+ */
 public class ApplicationThreadCompat {
 
     public static IInterface asInterface(IBinder binder) {

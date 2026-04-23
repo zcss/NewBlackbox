@@ -16,6 +16,9 @@ import top.niunaijun.blackbox.proxy.record.ProxyPendingRecord;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * 宿主侧代理Activity：接收沙盒传来的ProxyActivityRecord后，转发启动目标Activity并立刻finish。
+ */
 public class ProxyActivity extends Activity {
     public static final String TAG = "ProxyActivity";
 

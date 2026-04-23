@@ -6,6 +6,9 @@ import java.util.AbstractSet;
 import java.util.Iterator;
 
 
+/**
+ * 只读数组Set：轻量迭代器以最小开销遍历不可变数组。
+ */
 public final class FastImmutableArraySet<T> extends AbstractSet<T> {
     FastIterator<T> mIterator;
     T[] mContents;

@@ -4,6 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 
+/**
+ * 每用户包状态：标记是否已安装/停止/隐藏，默认未安装且停止。
+ */
 public class BPackageUserState implements Parcelable {
     public boolean installed;
     public boolean stopped;

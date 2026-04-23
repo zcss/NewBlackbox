@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * 运行中进程信息集合：封装系统RunningAppProcessInfo列表。
+ */
 public class RunningAppProcessInfo implements Parcelable {
     public List<ActivityManager.RunningAppProcessInfo> mAppProcessInfoList;
 

@@ -24,6 +24,9 @@ import top.niunaijun.blackbox.utils.TrieTree;
 
 
 @SuppressLint("SdCardPath")
+/**
+ * IO 重定向核心：将应用访问的系统路径映射到沙盒目录，支持黑白名单、规则缓存与原生规则注入。
+ */
 public class IOCore {
     public static final String TAG = "IOCore";
 
@@ -39,6 +42,7 @@ public class IOCore {
     }
 
     
+    /** 注册路径重定向规则 */
     public void addRedirect(String origPath, String redirectPath) {
         if (TextUtils.isEmpty(origPath) || TextUtils.isEmpty(redirectPath) || mRedirectMap.get(origPath) != null)
             return;
@@ -52,12 +56,14 @@ public class IOCore {
         NativeCore.addIORule(origPath, redirectPath);
     }
 
+    /** 添加黑名单路径（跳过重定向，直接匹配返回） */
     public void addBlackRedirect(String path) {
         if (TextUtils.isEmpty(path))
             return;
         sBlackTree.add(path);
     }
 
+    /** 查询重定向结果：优先黑名单，随后最长前缀匹配替换 */
     public String redirectPath(String path) {
         if (TextUtils.isEmpty(path))
             return path;
@@ -104,6 +110,9 @@ public class IOCore {
 
     
 
+    /**
+     * 启用路径重定向：构建规则（nativeLib/dataDir/profiles/sdcard等）、可选隐藏root、注入到Native层。
+     */
     public void enableRedirect(Context context) {
         Map<String, String> rule = new LinkedHashMap<>();
         Set<String> blackRule = new HashSet<>();

@@ -22,6 +22,9 @@ import top.niunaijun.blackbox.proxy.ProxyBroadcastReceiver;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * 广播管理：为每个包注册代理Receiver，分发/超时管理PendingResult，并监听包安装卸载动态更新注册。
+ */
 public class BroadcastManager implements PackageMonitor {
     public static final String TAG = "BroadcastManager";
 

@@ -38,6 +38,13 @@ import top.niunaijun.blackbox.utils.compat.BuildCompat;
 
 
 
+/**
+ * ActivityThread.H Callback 代理：
+ * - 注入到 ActivityThread.mH.mCallback，拦截 LAUNCH_ACTIVITY/EXECUTE_TRANSACTION 等消息；
+ * - 在启动前恢复目标 Intent/ActivityInfo，并确保虚拟进程完成绑定；
+ * - 兼容 T/S/P 等不同事务模型，必要时将消息放回队首重新调度。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class HCallbackProxy implements IInjectHook, Handler.Callback {
     public static final String TAG = "HCallbackStub";
     private Handler.Callback mOtherCallback;

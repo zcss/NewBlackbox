@@ -15,6 +15,12 @@ import top.niunaijun.blackbox.fake.hook.MethodHook;
 import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 
 
+/**
+ * WifiManager 代理：
+ * - 替换 Wi‑Fi 服务；getConnectionInfo 返回稳定的虚拟 BSSID/Mac/SSID；
+ * - 仅用于隔离真实环境信息，避免隐私/适配问题。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IWifiManagerProxy extends BinderInvocationStub {
     public static final String TAG = "IWifiManagerProxy";
 

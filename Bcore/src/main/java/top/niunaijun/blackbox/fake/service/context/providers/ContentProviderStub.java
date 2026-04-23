@@ -14,6 +14,12 @@ import android.os.Bundle;
 import top.niunaijun.blackbox.utils.AttributionSourceUtils;
 
 
+/**
+ * ContentProviderStub：
+ * - 包装系统 IContentProvider，按应用包名与 AttributionSource 修正入参；
+ * - 对 UID/权限类异常返回安全默认，避免崩溃；其余调用透传。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class ContentProviderStub extends ClassInvocationStub implements BContentProvider {
     public static final String TAG = "ContentProviderStub";
     private IInterface mBase;

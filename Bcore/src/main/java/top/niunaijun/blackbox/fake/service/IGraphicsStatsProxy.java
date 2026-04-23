@@ -10,6 +10,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.MethodParameterUtils;
 
 
+/**
+ * GraphicsStats 代理：
+ * - 替换 graphicsstats 服务；requestBufferForProcess 时统一首包名参数；
+ * - 保证图形统计缓冲区请求在虚拟环境下参数一致。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class IGraphicsStatsProxy extends BinderInvocationStub {
 
     public IGraphicsStatsProxy() {

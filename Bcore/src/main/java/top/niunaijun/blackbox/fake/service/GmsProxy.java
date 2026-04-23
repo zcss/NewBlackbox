@@ -13,6 +13,12 @@ import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * GMS 代理：
+ * - 反射获取 IGmsServiceBroker 接口并替换 gms 服务；
+ * - 修正 getService 调用的包名为宿主，鉴权/Token 失败时返回占位结果，防止崩溃。
+ * 仅添加中文注释，不改动任何逻辑。
+ */
 public class GmsProxy extends BinderInvocationStub {
     public static final String TAG = "GmsProxy";
 

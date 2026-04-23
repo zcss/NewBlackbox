@@ -2,6 +2,9 @@ package top.niunaijun.blackboxa.util;
 
 import android.util.Log;
 
+/**
+ * 内存管理工具：用于监控内存使用并在必要时触发 GC。
+ */
 public final class MemoryManager {
     private static final String TAG = "MemoryManager";
     private static final double MEMORY_THRESHOLD = 0.8;   // 80%
@@ -9,6 +12,10 @@ public final class MemoryManager {
 
     private MemoryManager() {}
 
+    /**
+     * 判断当前内存是否低于安全阈值。
+     * @return true 表示内存使用率低于 80%
+     */
     public static boolean isMemorySafe() {
         try {
             Runtime runtime = Runtime.getRuntime();
@@ -22,6 +29,10 @@ public final class MemoryManager {
         }
     }
 
+    /**
+     * 判断当前内存是否超过危险阈值。
+     * @return true 表示内存使用率高于 90%
+     */
     public static boolean isMemoryCritical() {
         try {
             Runtime runtime = Runtime.getRuntime();
@@ -35,6 +46,9 @@ public final class MemoryManager {
         }
     }
 
+    /**
+     * 获取当前内存使用百分比（0-100）。
+     */
     public static int getMemoryUsagePercentage() {
         try {
             Runtime runtime = Runtime.getRuntime();
@@ -48,6 +62,10 @@ public final class MemoryManager {
         }
     }
 
+    /**
+     * 若内存达到危险阈值则尝试触发一次 GC。
+     * @return 是否触发了 GC
+     */
     public static boolean forceGarbageCollectionIfNeeded() {
         try {
             if (isMemoryCritical()) {
@@ -64,6 +82,9 @@ public final class MemoryManager {
         }
     }
 
+    /**
+     * 针对 RecyclerView 高滚动压力的简单内存优化（可能触发 GC）。
+     */
     public static void optimizeMemoryForRecyclerView() {
         try {
             int memoryUsage = getMemoryUsagePercentage();
@@ -81,6 +102,9 @@ public final class MemoryManager {
         }
     }
 
+    /**
+     * 是否应跳过图标加载（内存紧张时返回 true）。
+     */
     public static boolean shouldSkipIconLoading() {
         try {
             int memoryUsage = getMemoryUsagePercentage();
@@ -91,6 +115,9 @@ public final class MemoryManager {
         }
     }
 
+    /**
+     * 返回一段简要的内存状态字符串。
+     */
     public static String getMemoryInfo() {
         try {
             Runtime runtime = Runtime.getRuntime();

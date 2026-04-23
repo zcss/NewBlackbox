@@ -6,6 +6,9 @@ import android.os.Parcelable;
 import top.niunaijun.blackbox.utils.Slog;
 
 
+/**
+ * 安装结果：success 与 packageName/msg 组合，提供快捷设置错误方法。
+ */
 public class InstallResult implements Parcelable {
     public static final String TAG = "InstallResult";
 

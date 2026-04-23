@@ -6,16 +6,27 @@ import android.os.Parcelable;
 
 
 
+/**
+ * 应用进程配置：用于跨进程序列化传递沙盒进程的关键标识信息。
+ */
 public class AppConfig implements Parcelable {
     public static final String KEY = "BlackBox_client_config";
 
+    /** 目标包名 */
     public String packageName;
+    /** 进程名（可能为:remote等） */
     public String processName;
+    /** BlackBox进程ID（虚拟PID） */
     public int bpid;
+    /** BlackBox UID（含user隔离的虚拟UID） */
     public int buid;
+    /** 宿主真实UID */
     public int uid;
+    /** 虚拟用户ID */
     public int userId;
+    /** 调用方BlackBox UID（跨进程时记录来源） */
     public int callingBUid;
+    /** 进程与服务绑定令牌 */
     public IBinder token;
 
     @Override

@@ -6,6 +6,9 @@ import android.os.Parcelable;
 import java.util.List;
 
 
+/**
+ * 定位配置：控制定位模式、当前小区、邻区列表与目标位置。
+ */
 public class BLocationConfig implements Parcelable {
 
     public int pattern;

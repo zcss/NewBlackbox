@@ -11,6 +11,9 @@ import java.util.Objects;
 import top.niunaijun.blackbox.BlackBoxCore;
 
 
+/**
+ * 已安装包模型：绑定userId与包名，提供便捷获取ApplicationInfo/PackageInfo。
+ */
 public class InstalledPackage implements Parcelable {
     public int userId;
     public String packageName;
