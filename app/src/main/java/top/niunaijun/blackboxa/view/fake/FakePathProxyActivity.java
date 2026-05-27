@@ -1,13 +1,19 @@
 package top.niunaijun.blackboxa.view.fake;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -26,6 +32,7 @@ import top.niunaijun.blackboxa.bean.AppInfo;
 import top.niunaijun.blackboxa.bean.InstalledAppBean;
 import top.niunaijun.blackboxa.databinding.ActivityListBinding;
 import top.niunaijun.blackboxa.util.InjectionUtil;
+import top.niunaijun.blackboxa.util.ProxySettings;
 import top.niunaijun.blackboxa.view.base.BaseActivity;
 import top.niunaijun.blackboxa.view.apps.AppsViewModel;
 import top.niunaijun.blackboxa.view.list.ListActivity;
@@ -37,6 +44,7 @@ public class FakePathProxyActivity extends BaseActivity {
     private ActivityListBinding viewBinding;
     private RVAdapter<InstalledAppBean> mAdapter;
     private AppsViewModel viewModel;
+    private int userId; // 记录当前 userId，供保存设置使用
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +54,11 @@ public class FakePathProxyActivity extends BaseActivity {
 
         initToolbar(viewBinding.toolbarLayout.toolbar, R.string.installed_app, true,null);
         // APP 列表
-        mAdapter = new RVAdapter<InstalledAppBean>(this, new ListAdapter())
+        mAdapter = new RVAdapter<InstalledAppBean>(this, new ListAdapter(ListAdapter.HOLDER_PATH_PROXY))
                 .bind(viewBinding.appListRecyclerView)
                 .setItemClickListener((view, installedAppBean, integer) -> {
-//                    finishWithResult((installedAppBean).getPackageName());
+                    // 弹出代理选择对话框
+                    showProxyDialog(installedAppBean);
                     return kotlin.Unit.INSTANCE;
                 });
 
@@ -82,14 +91,15 @@ public class FakePathProxyActivity extends BaseActivity {
     private void initViewModel() {
         Log.e(TAG,"initViewModel() ");
         viewModel = new ViewModelProvider(this, InjectionUtil.getAppsFactory()).get(AppsViewModel.class);
-        int userID = getIntent().getIntExtra("userID", 0);
-        viewModel.getInstalledAppsWithRetry(userID);
+        userId = getIntent().getIntExtra("userID", 0);
+        viewModel.getInstalledAppsWithRetry(userId);
         viewModel.getAppsLiveData().observe(this, list -> {
             if (list != null) {
                 // 仅显示该 userID 下安装的应用（非系统应用已在仓库层处理）
                 List<InstalledAppBean> beans = new java.util.ArrayList<>();
                 for (AppInfo app : list) {
-                    beans.add(new InstalledAppBean(app.getName(), app.getIcon(), app.getPackageName(), app.getSourceDir(), true));
+                    boolean enabled = ProxySettings.hasAnyConfig(this, userId, app.getPackageName());
+                    beans.add(new InstalledAppBean(app.getName(), app.getIcon(), app.getPackageName(), app.getSourceDir(), enabled));
                 }
                 mAdapter.setItems(beans, true, true);
                 if (beans.isEmpty()) {
@@ -99,7 +109,7 @@ public class FakePathProxyActivity extends BaseActivity {
                 }
             }
         });
-        viewBinding.toolbarLayout.toolbar.setTitle(getString(R.string.installed_app) + " (User " + userID + ")");
+        viewBinding.toolbarLayout.toolbar.setTitle(getString(R.string.installed_app) + " (User " + userId + ")");
 
     }
 
@@ -174,4 +184,45 @@ public class FakePathProxyActivity extends BaseActivity {
         Intent intent = new Intent(context, ListActivity.class);
         context.startActivity(intent);
     }
+
+    // 弹出包含“路径代理”、“联系人代理”的多选对话框，并将选择保存到 SP（按 userId+packageName 绑定）
+    private void showProxyDialog(InstalledAppBean app) {
+        if (app == null || app.getPackageName() == null) return;
+        final String pkg = app.getPackageName();
+
+        // 读取当前已保存状态
+        boolean savedPath = ProxySettings.isPathEnabled(this, userId, pkg);
+        boolean savedContacts = ProxySettings.isContactsEnabled(this, userId, pkg);
+
+        // 动态构建复选框视图
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.VERTICAL);
+        int padding = (int) (16 * getResources().getDisplayMetrics().density);
+        container.setPadding(padding, padding, padding, padding);
+        container.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        CheckBox cbPath = new CheckBox(this);
+        cbPath.setText("路径代理");
+        cbPath.setChecked(savedPath);
+        container.addView(cbPath);
+
+        CheckBox cbContacts = new CheckBox(this);
+        cbContacts.setText("联系人代理");
+        cbContacts.setChecked(savedContacts);
+        container.addView(cbContacts);
+
+        new AlertDialog.Builder(this)
+                .setTitle("选择代理功能\n(" + pkg + ")")
+                .setView(container)
+                .setNegativeButton(android.R.string.cancel, (d, w) -> d.dismiss())
+                .setPositiveButton(android.R.string.ok, (d, w) -> {
+                    boolean pathChecked = cbPath.isChecked();
+                    boolean contactsChecked = cbContacts.isChecked();
+                    ProxySettings.setPathEnabled(this, userId, pkg, pathChecked);
+                    ProxySettings.setContactsEnabled(this, userId, pkg, contactsChecked);
+                    Toast.makeText(this, "已保存", Toast.LENGTH_SHORT).show();
+                })
+                .show();
+    }
+
 }

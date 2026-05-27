@@ -1,5 +1,7 @@
 package top.niunaijun.blackbox.core.env;
 
+import android.util.Log;
+
 import java.io.File;
 import java.util.Locale;
 
@@ -12,6 +14,7 @@ import top.niunaijun.blackbox.utils.FileUtils;
  * 沙盒环境目录结构：统一构建/获取 BlackBox 虚拟根、用户目录、包目录及缓存等路径。
  */
 public class BEnvironment {
+    static final String TAG = "BEnvironment";
     private static final File sVirtualRoot = new File(BlackBoxCore.getContext().getCacheDir().getParent(), "blackbox");
     private static final File sExternalVirtualRoot = BlackBoxCore.getContext().getExternalFilesDir("blackbox");
 
@@ -19,6 +22,7 @@ public class BEnvironment {
     public static File EMPTY_JAR = new File(getCacheDir(), "empty.apk");
 
     public static void load() {
+        Log.w(TAG,"路径重定向App 环境目录");
         FileUtils.mkdirs(sVirtualRoot);
         FileUtils.mkdirs(sExternalVirtualRoot);
         FileUtils.mkdirs(getSystemDir());

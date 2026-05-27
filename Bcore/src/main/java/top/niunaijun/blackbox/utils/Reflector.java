@@ -15,10 +15,15 @@ import java.lang.reflect.Modifier;
 public class Reflector {
     public static final String LOG_TAG = "Reflector";
 
+    /** 目标类型（用于字段/方法/构造定位）。 */
     protected Class<?> mType;
+    /** 已绑定的调用者（非静态成员访问时使用）。 */
     protected Object mCaller;
+    /** 当前定位到的构造器。 */
     protected Constructor mConstructor;
+    /** 当前定位到的字段。 */
     protected Field mField;
+    /** 当前定位到的方法。 */
     protected Method mMethod;
 
     /** 通过类名创建反射器。 */

@@ -442,6 +442,9 @@ public class FileUtils {
     /**
      * 简易文件排他锁：以同目录 lock 文件配合 FileChannel.lock 实现引用计数锁/解锁。
      */
+    /**
+     * 简单文件锁封装，基于同目录 lock 文件 + FileChannel.lock，实现重入计数。
+     */
     public static class FileLock {
         private static FileLock singleton;
         private Map<String, FileLockCount> mRefCountMap = new ConcurrentHashMap<String, FileLockCount>();

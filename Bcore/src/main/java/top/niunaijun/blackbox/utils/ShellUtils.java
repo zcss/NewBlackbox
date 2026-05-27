@@ -10,9 +10,13 @@ import java.util.List;
  * Shell 调用工具：以 su/sh 执行命令，支持批量与返回标准输出。
  */
 public class ShellUtils {
+    /** su 命令可执行名。 */
     public static final String COMMAND_SU = "su";
+    /** sh 命令可执行名。 */
     public static final String COMMAND_SH = "sh";
+    /** 退出 shell 的命令行。 */
     public static final String COMMAND_EXIT = "exit\n";
+    /** 单条命令结束换行。 */
     public static final String COMMAND_LINE_END = "\n";
 
     private ShellUtils() {

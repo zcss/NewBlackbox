@@ -13,6 +13,7 @@ import java.security.NoSuchAlgorithmException;
  */
 public class Md5Utils {
 
+    /** 十六进制字符表，用于把摘要字节转成字符串。 */
     private static final char[] hexDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
             'e', 'f' };
 

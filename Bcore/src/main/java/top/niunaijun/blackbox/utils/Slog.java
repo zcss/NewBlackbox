@@ -9,6 +9,7 @@ import android.util.Log;
  * 统一日志工具：包装 android.util.Log，提供简单级别输出与堆栈附带打印。
  */
 public final class Slog {
+     /** 系统日志通道常量（保持与 Android 日志 ID 对齐）。 */
      public static final int LOG_ID_SYSTEM = 3;
 
     private Slog() {
