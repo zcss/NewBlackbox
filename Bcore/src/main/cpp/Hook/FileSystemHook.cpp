@@ -30,12 +30,15 @@ int new_open(const char *pathname, int flags, ...) {
         }
     }
     
-    
+
     va_list args;
     va_start(args, flags);
     mode_t mode = va_arg(args, mode_t);
     va_end(args);
-    
+
+    if (pathname) {
+        ALOGD("open: %s", pathname);
+    }
     return orig_open(pathname, flags, mode);
 }
 
@@ -54,12 +57,15 @@ int new_open64(const char *pathname, int flags, ...) {
         }
     }
     
-    
+
     va_list args;
     va_start(args, flags);
     mode_t mode = va_arg(args, mode_t);
     va_end(args);
-    
+
+    if (pathname) {
+        ALOGD("open64: %s", pathname);
+    }
     return orig_open64(pathname, flags, mode);
 }
 

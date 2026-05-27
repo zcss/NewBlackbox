@@ -16,8 +16,10 @@ import top.niunaijun.blackbox.entity.JobRecord;
  * 仅添加中文注释，不改动任何逻辑。
  */
 public class BJobManager extends BlackManager<IBJobManagerService> {
+    /** 单例 */
     private static final BJobManager sJobManager = new BJobManager();
 
+    /** 获取单例 */
     public static BJobManager get() {
         return sJobManager;
     }
@@ -27,6 +29,7 @@ public class BJobManager extends BlackManager<IBJobManagerService> {
         return ServiceManager.JOB_MANAGER;
     }
 
+    /** 提交 Job 调度 */
     public JobInfo schedule(JobInfo info) {
         try {
             return getService().schedule(info, BActivityThread.getUserId());
@@ -36,6 +39,7 @@ public class BJobManager extends BlackManager<IBJobManagerService> {
         return null;
     }
 
+    /** 查询 Job 记录 */
     public JobRecord queryJobRecord(String processName, int jobId) {
         try {
             return getService().queryJobRecord(processName, jobId, BActivityThread.getUserId());
@@ -45,6 +49,7 @@ public class BJobManager extends BlackManager<IBJobManagerService> {
         return null;
     }
 
+    /** 取消某进程下所有 Job */
     public void cancelAll(String processName) {
         try {
             getService().cancelAll(processName, BActivityThread.getUserId());
@@ -53,6 +58,7 @@ public class BJobManager extends BlackManager<IBJobManagerService> {
         }
     }
 
+    /** 取消指定 Job */
     public int cancel(String processName, int jobId) {
         try {
             return getService().cancel(processName, jobId, BActivityThread.getUserId());

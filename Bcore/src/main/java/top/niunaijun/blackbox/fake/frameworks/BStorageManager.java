@@ -15,8 +15,10 @@ import top.niunaijun.blackbox.core.system.os.IBStorageManagerService;
  * 仅添加中文注释，不改动任何逻辑。
  */
 public class BStorageManager extends BlackManager<IBStorageManagerService> {
+    /** 单例 */
     private static final BStorageManager sStorageManager = new BStorageManager();
 
+    /** 获取单例 */
     public static BStorageManager get() {
         return sStorageManager;
     }
@@ -26,6 +28,7 @@ public class BStorageManager extends BlackManager<IBStorageManagerService> {
         return ServiceManager.STORAGE_MANAGER;
     }
 
+    /** 获取卷列表 */
     public StorageVolume[] getVolumeList(int uid, String packageName, int flags, int userId) {
         try {
             return getService().getVolumeList(uid, packageName, flags, userId);
@@ -35,6 +38,7 @@ public class BStorageManager extends BlackManager<IBStorageManagerService> {
         return new StorageVolume[]{};
     }
 
+    /** 将文件路径转换为 content Uri */
     public Uri getUriForFile(String file) {
         try {
             return getService().getUriForFile(file);

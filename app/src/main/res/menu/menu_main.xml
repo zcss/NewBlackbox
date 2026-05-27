@@ -12,6 +12,10 @@
         android:id="@+id/fake_location"
         android:title="@string/fake_location"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/path_proxy"
+        android:title="@string/path_proxy"
+        app:showAsAction="never" />
 
     <item
             android:id="@+id/main_git"

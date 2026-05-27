@@ -20,8 +20,10 @@ import top.niunaijun.blackbox.core.system.accounts.IBAccountManagerService;
  * 仅添加中文注释，不改动任何逻辑。
  */
 public class BAccountManager extends BlackManager<IBAccountManagerService> {
+    /** 单例 */
     private static final BAccountManager sBAccountManager = new BAccountManager();
 
+    /** 获取单例 */
     public static BAccountManager get() {
         return sBAccountManager;
     }
@@ -31,6 +33,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         return ServiceManager.ACCOUNT_MANAGER;
     }
 
+    /** 获取账户密码 */
     public String getPassword(Account account) {
         try {
             return getService().getPassword(account, BActivityThread.getUserId());
@@ -40,7 +43,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         return null;
     }
 
-
+    /** 获取账户自定义数据 */
     public String getUserData(Account account, String key) {
         try {
             return getService().getUserData(account, key, BActivityThread.getUserId());
@@ -50,6 +53,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         return null;
     }
 
+    /** 获取支持的认证器类型 */
     public AuthenticatorDescription[] getAuthenticatorTypes() {
         try {
             return getService().getAuthenticatorTypes(BActivityThread.getUserId());
@@ -59,6 +63,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         return null;
     }
 
+    /** 查询某包下的账户 */
     public Account[] getAccountsForPackage(String packageName, int uid) {
         try {
             return getService().getAccountsForPackage(packageName, uid, BActivityThread.getUserId());
@@ -68,6 +73,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         return null;
     }
 
+    /** 按类型查询某包下账户 */
     public Account[] getAccountsByTypeForPackage(String type, String packageName) {
         try {
             return getService().getAccountsByTypeForPackage(type, packageName, BActivityThread.getUserId());
@@ -77,6 +83,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         return null;
     }
 
+    /** 获取当前用户的账户（可传类型过滤） */
     public Account[] getAccountsAsUser(String type) {
         try {
             return getService().getAccountsAsUser(type, BActivityThread.getUserId());
@@ -86,6 +93,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         return null;
     }
 
+    /** 通过类型和特性获取账户（异步回调） */
     public void getAccountByTypeAndFeatures(IAccountManagerResponse response, String accountType,
                                             String[] features) {
         try {
@@ -94,7 +102,8 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
             e.printStackTrace();
         }
     }
-    
+
+    /** 按特性查询账户（异步回调） */
     public void getAccountsByFeatures(IAccountManagerResponse response, String accountType,
                                String[] features) {
         try {
@@ -104,6 +113,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
+    /** 明文创建账户 */
     public boolean addAccountExplicitly(Account account, String password, Bundle extras) {
         try {
             return getService().addAccountExplicitly(account, password, extras, BActivityThread.getUserId());
@@ -113,6 +123,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         return false;
     }
 
+    /** 异步移除账户（可触发 UI） */
     public void removeAccountAsUser(IAccountManagerResponse response, Account account,
                              boolean expectActivityLaunch) {
         try {
@@ -122,6 +133,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
+    /** 显式移除账户 */
     public boolean removeAccountExplicitly(Account account) {
         try {
             return getService().removeAccountExplicitly(account, BActivityThread.getUserId());
@@ -131,6 +143,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         return false;
     }
 
+    /** 复制账户到其他用户 */
     public void copyAccountToUser(IAccountManagerResponse response, Account account,
                            int userFrom, int userTo) {
         try {
@@ -140,6 +153,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
+    /** 失效指定 token */
     public void invalidateAuthToken(String accountType, String authToken) {
         try {
             getService().invalidateAuthToken(accountType, authToken, BActivityThread.getUserId());
@@ -148,6 +162,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
+    /** 读取缓存 token */
     public String peekAuthToken(Account account, String authTokenType) {
         try {
             return getService().peekAuthToken(account, authTokenType, BActivityThread.getUserId());
@@ -157,6 +172,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         return null;
     }
 
+    /** 设置 token */
     public void setAuthToken(Account account, String authTokenType, String authToken) {
         try {
             getService().setAuthToken(account, authTokenType, authToken, BActivityThread.getUserId());
@@ -165,7 +181,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
-
+    /** 设置密码 */
     public void setPassword(Account account, String password) {
         try {
             getService().setPassword(account, password, BActivityThread.getUserId());
@@ -174,6 +190,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
+    /** 清除密码 */
     public void clearPassword(Account account) {
         try {
             getService().clearPassword(account, BActivityThread.getUserId());
@@ -182,6 +199,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
+    /** 设置自定义键值 */
     public void setUserData(Account account, String key, String value) {
         try {
             getService().setUserData(account, key, value, BActivityThread.getUserId());
@@ -190,6 +208,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
+    /** 授权某 uid 访问指定 token 类型 */
     public void updateAppPermission(Account account, String authTokenType, int uid, boolean value) {
         try {
             getService().updateAppPermission(account, authTokenType, uid, value);
@@ -198,6 +217,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
+    /** 异步获取 token */
     public void getAuthToken(IAccountManagerResponse response, Account account,
                       String authTokenType, boolean notifyOnAuthFailure, boolean expectActivityLaunch,
                       Bundle options) {
@@ -208,6 +228,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
+    /** 异步新增账户 */
     public void addAccount(IAccountManagerResponse response, String accountType,
                     String authTokenType, String[] requiredFeatures, boolean expectActivityLaunch,
                     Bundle options) {
@@ -218,6 +239,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
+    /** 异步新增账户到当前用户 */
     public void addAccountAsUser(IAccountManagerResponse response, String accountType,
                           String authTokenType, String[] requiredFeatures, boolean expectActivityLaunch,
                           Bundle options) {
@@ -228,6 +250,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
+    /** 更新凭据 */
     public void updateCredentials(IAccountManagerResponse response, Account account,
                            String authTokenType, boolean expectActivityLaunch, Bundle options) {
         try {
@@ -237,6 +260,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
+    /** 编辑账户属性 */
     public void editProperties(IAccountManagerResponse response, String accountType,
                         boolean expectActivityLaunch) {
         try {
@@ -246,6 +270,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
+    /** 确认凭据 */
     public void confirmCredentialsAsUser(IAccountManagerResponse response, Account account,
                                   Bundle options, boolean expectActivityLaunch) {
         try {
@@ -255,6 +280,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
+    /** 账户标记为已认证 */
     public boolean accountAuthenticated(Account account) {
         try {
             return getService().accountAuthenticated(account, BActivityThread.getUserId());
@@ -264,6 +290,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         return false;
     }
 
+    /** 查询 token 标签 */
     public void getAuthTokenLabel(IAccountManagerResponse response, String accountType,
                            String authTokenType) {
         try {
@@ -273,7 +300,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
-    
+    /** 查询包与账户可见性映射 */
     public Map getPackagesAndVisibilityForAccount(Account account) {
         try {
             return getService().getPackagesAndVisibilityForAccount(account, BActivityThread.getUserId());
@@ -283,6 +310,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         return null;
     }
 
+    /** 创建账户并设置可见性 */
     public boolean addAccountExplicitlyWithVisibility(Account account, String password, Bundle extras,
                                                Map visibility) {
         try {
@@ -293,6 +321,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         return false;
     }
 
+    /** 设置某包对账户的可见性 */
     public boolean setAccountVisibility(Account account, String packageName, int newVisibility) {
         try {
             return getService().setAccountVisibility(account, packageName, newVisibility, BActivityThread.getUserId());
@@ -302,17 +331,18 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         return false;
     }
 
+    /** 查询某包对账户的可见性 */
     public int getAccountVisibility(Account account, String packageName) {
         try {
             return getService().getAccountVisibility(account, packageName, BActivityThread.getUserId());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        
+        // 3 = VISIBILITY_UNDEFINED 的常见语义
         return 3;
     }
 
-    
+    /** 查询某包的账户与可见性 */
     public Map getAccountsAndVisibilityForPackage(String packageName, String accountType) {
         try {
             return getService().getAccountsAndVisibilityForPackage(packageName, accountType, BActivityThread.getUserId());
@@ -322,6 +352,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         return null;
     }
 
+    /** 注册账户监听 */
     public void registerAccountListener(String[] accountTypes, String opPackageName) {
         try {
             getService().registerAccountListener(accountTypes, opPackageName, BActivityThread.getUserId());
@@ -330,6 +361,7 @@ public class BAccountManager extends BlackManager<IBAccountManagerService> {
         }
     }
 
+    /** 取消账户监听 */
     public void unregisterAccountListener(String[] accountTypes, String opPackageName) {
         try {
             getService().unregisterAccountListener(accountTypes, opPackageName, BActivityThread.getUserId());

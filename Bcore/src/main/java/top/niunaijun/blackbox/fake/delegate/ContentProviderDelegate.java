@@ -32,9 +32,16 @@ import top.niunaijun.blackbox.utils.compat.BuildCompat;
  * - 清理 Settings.* 的 NameValueCache，避免持有旧的 mContentProvider 引用导致越权/崩溃。
  */
 public class ContentProviderDelegate {
+    /** 日志 TAG */
     public static final String TAG = "ContentProviderDelegate";
+    /** 已注入过的 Provider authority 集合 */
     private static Set<String> sInjected = new HashSet<>();
 
+    /**
+     * 更新单个 ContentProvider holder，将其 provider 替换为对应的 Stub。
+     * @param holder IActivityManager 返回的 holder 对象
+     * @param auth   provider authority
+     */
     public static void update(Object holder, String auth) {
         IInterface iInterface;
         if (BuildCompat.isOreo()) {
@@ -63,6 +70,9 @@ public class ContentProviderDelegate {
         }
     }
 
+    /**
+     * 批量初始化当前进程内的 Provider 代理，并清理 Settings 缓存中的 provider 引用。
+     */
     public static void init() {
         clearSettingProvider();
 
@@ -85,6 +95,7 @@ public class ContentProviderDelegate {
         }
     }
 
+    /** 清理 Settings.* 名值缓存中的 mContentProvider 引用（强制重新获取） */
     public static void clearSettingProvider() {
         Object cache;
         cache = BRSettingsSystem.get().sNameValueCache();
@@ -103,6 +114,7 @@ public class ContentProviderDelegate {
         }
     }
 
+    /** 将 NameValueCache 中保存的 mContentProvider 置空 */
     private static void clearContentProvider(Object cache) {
         if (BuildCompat.isOreo()) {
             Object holder = BRSettingsNameValueCacheOreo.get(cache).mProviderHolder();

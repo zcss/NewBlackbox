@@ -40,6 +40,7 @@ import top.niunaijun.blackbox.utils.compat.BuildCompat;
  */
 public class PackageManagerCompat {
 
+    /** 从包设置生成 PackageInfo（按 flags 与 userId 过滤）。 */
     public static PackageInfo generatePackageInfo(BPackageSettings ps, int flags, BPackageUserState state, int userId) {
         if (ps == null) {
             return null;

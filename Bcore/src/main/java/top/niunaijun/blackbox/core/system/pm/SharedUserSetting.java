@@ -25,8 +25,7 @@ public final class SharedUserSetting implements Parcelable {
     String name;
     int userId;
 
-    
-    
+
     int seInfoTargetSdkVersion;
 
     SharedUserSetting(String _name) {
@@ -34,7 +33,7 @@ public final class SharedUserSetting implements Parcelable {
     }
 
     SharedUserSetting() {
-        
+
     }
 
     @Override
@@ -66,13 +65,12 @@ public final class SharedUserSetting implements Parcelable {
         try {
             byte[] sharedUsersBytes = FileUtils.toByteArray(BEnvironment.getSharedUserConf());
             if (sharedUsersBytes == null || sharedUsersBytes.length == 0) {
-                
+
                 return;
             }
-            
-            
-            
-            if (sharedUsersBytes.length < 100) { 
+
+
+            if (sharedUsersBytes.length < 100) {
                 Slog.w(TAG, "Detected old format SharedUserSetting data, clearing for fresh start");
                 BEnvironment.getSharedUserConf().delete();
                 synchronized (sSharedUsers) {
@@ -80,7 +78,7 @@ public final class SharedUserSetting implements Parcelable {
                 }
                 return;
             }
-            
+
             parcel.unmarshall(sharedUsersBytes, 0, sharedUsersBytes.length);
             parcel.setDataPosition(0);
 
@@ -90,15 +88,15 @@ public final class SharedUserSetting implements Parcelable {
                 sSharedUsers.putAll(hashMap);
             }
         } catch (Exception e) {
-            
+
             try {
-                
+
                 BEnvironment.getSharedUserConf().delete();
             } catch (Exception deleteException) {
-                
+
             }
-            
-            
+
+
             synchronized (sSharedUsers) {
                 sSharedUsers.clear();
             }

@@ -10,6 +10,7 @@
 
 HOOK_JNI(jstring, canonicalize0, JNIEnv *env, jobject obj, jstring path) {
     jstring redirect = IO::redirectPath(env, path);
+    ALOGD("UnixFS.canonicalize0: redirected");
     return orig_canonicalize0(env, obj, redirect);
 }
 

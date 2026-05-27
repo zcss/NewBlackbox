@@ -12,8 +12,18 @@ import top.niunaijun.blackboxa.util.ResUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * GMS 管理仓库。
+ * 负责：
+ * - 查询各虚拟用户下 GMS 的安装状态
+ * - 安装/卸载 GMS，并将结果封装为 GmsInstallBean 通过 LiveData 回传
+ * 注意：BlackBoxCore.get().getUsers() 返回的是 Kotlin/Java 对象，使用反射读取 id。
+ */
 public class GmsRepository {
 
+    /**
+     * 获取所有用户的 GMS 安装状态列表（用户名从 Remark{userId} 读取，默认 "User {id}"）。
+     */
     public void getGmsInstalledList(MutableLiveData<List<GmsBean>> mInstalledLiveData) {
         List<GmsBean> userList = new ArrayList<>();
         for (Object it : BlackBoxCore.get().getUsers()) {
@@ -35,6 +45,9 @@ public class GmsRepository {
         mInstalledLiveData.postValue(userList);
     }
 
+    /**
+     * 安装当前用户的 GMS。结果封装为 GmsInstallBean：包含 userID、是否成功、消息文本。
+     */
     public void installGms(int userID, MutableLiveData<GmsInstallBean> mUpdateInstalledLiveData) {
         Object installResult = BlackBoxCore.get().installGms(userID);
         boolean success;
@@ -55,6 +68,9 @@ public class GmsRepository {
         mUpdateInstalledLiveData.postValue(bean);
     }
 
+    /**
+     * 卸载当前用户的 GMS（若已安装）。返回卸载是否成功与对应提示文案。
+     */
     public void uninstallGms(int userID, MutableLiveData<GmsInstallBean> mUpdateInstalledLiveData) {
         boolean isSuccess = false;
         if (BlackBoxCore.get().isInstallGms(userID)) {

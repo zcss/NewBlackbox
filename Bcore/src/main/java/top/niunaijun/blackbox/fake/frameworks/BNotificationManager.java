@@ -20,8 +20,10 @@ import top.niunaijun.blackbox.core.system.notification.IBNotificationManagerServ
  * 仅添加中文注释，不改动任何逻辑。
  */
 public class BNotificationManager extends BlackManager<IBNotificationManagerService> {
+    /** 单例 */
     private static final BNotificationManager sNotificationManager = new BNotificationManager();
 
+    /** 获取单例 */
     public static BNotificationManager get() {
         return sNotificationManager;
     }
@@ -31,6 +33,7 @@ public class BNotificationManager extends BlackManager<IBNotificationManagerServ
         return ServiceManager.NOTIFICATION_MANAGER;
     }
 
+    /** 查询通知渠道 */
     public NotificationChannel getNotificationChannel(String channelId) {
         try {
             return getService().getNotificationChannel(channelId, BActivityThread.getUserId());
@@ -40,6 +43,7 @@ public class BNotificationManager extends BlackManager<IBNotificationManagerServ
         return null;
     }
 
+    /** 查询渠道分组 */
     public List<NotificationChannelGroup> getNotificationChannelGroups(String packageName) {
         try {
             return getService().getNotificationChannelGroups(packageName, BActivityThread.getUserId());
@@ -49,6 +53,7 @@ public class BNotificationManager extends BlackManager<IBNotificationManagerServ
         return null;
     }
 
+    /** 创建通知渠道 */
     public void createNotificationChannel(NotificationChannel notificationChannel) {
         try {
             getService().createNotificationChannel(notificationChannel, BActivityThread.getUserId());
@@ -57,6 +62,7 @@ public class BNotificationManager extends BlackManager<IBNotificationManagerServ
         }
     }
 
+    /** 删除通知渠道 */
     public void deleteNotificationChannel(String channelId) {
         try {
             getService().deleteNotificationChannel(channelId, BActivityThread.getUserId());
@@ -65,6 +71,7 @@ public class BNotificationManager extends BlackManager<IBNotificationManagerServ
         }
     }
 
+    /** 创建渠道分组 */
     public void createNotificationChannelGroup(NotificationChannelGroup notificationChannelGroup) {
         try {
             getService().createNotificationChannelGroup(notificationChannelGroup, BActivityThread.getUserId());
@@ -73,6 +80,7 @@ public class BNotificationManager extends BlackManager<IBNotificationManagerServ
         }
     }
 
+    /** 删除渠道分组 */
     public void deleteNotificationChannelGroup(String groupId) {
         try {
             getService().deleteNotificationChannelGroup(groupId, BActivityThread.getUserId());
@@ -81,6 +89,7 @@ public class BNotificationManager extends BlackManager<IBNotificationManagerServ
         }
     }
 
+    /** 入队通知 */
     public void enqueueNotificationWithTag(int id, String tag, Notification notification) {
         try {
             getService().enqueueNotificationWithTag(id, tag, notification, BActivityThread.getUserId());
@@ -89,6 +98,7 @@ public class BNotificationManager extends BlackManager<IBNotificationManagerServ
         }
     }
 
+    /** 取消通知 */
     public void cancelNotificationWithTag(int id, String tag) {
         try {
             getService().cancelNotificationWithTag(id, tag, BActivityThread.getUserId());
@@ -97,6 +107,7 @@ public class BNotificationManager extends BlackManager<IBNotificationManagerServ
         }
     }
 
+    /** 查询渠道列表 */
     public List<NotificationChannel> getNotificationChannels(String packageName) {
         try {
             return getService().getNotificationChannels(packageName, BActivityThread.getUserId());

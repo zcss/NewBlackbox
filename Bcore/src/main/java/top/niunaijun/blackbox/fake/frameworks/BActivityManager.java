@@ -29,8 +29,10 @@ import top.niunaijun.blackbox.utils.Slog;
  */
 public class BActivityManager extends BlackManager<IBActivityManagerService> {
     private static final String TAG = "BActivityManager";
+    /** 单例 */
     private static final BActivityManager sActivityManager = new BActivityManager();
 
+    /** 获取单例 */
     public static BActivityManager get() {
         return sActivityManager;
     }
@@ -40,10 +42,13 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         return ServiceManager.ACTIVITY_MANAGER;
     }
 
+    /**
+     * 初始化/附加虚拟进程，返回进程环境配置。
+     */
     public AppConfig initProcess(String packageName, String processName, int userId) {
         int retryCount = 0;
         final int maxRetries = 3;
-        
+
         while (retryCount < maxRetries) {
             try {
                 IBActivityManagerService service = getService();
@@ -75,11 +80,12 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
             }
             retryCount++;
         }
-        
+
         Slog.e(TAG, "Failed to initProcess after " + maxRetries + " retries for package: " + packageName + ", process: " + processName);
         return null;
     }
 
+    /** 请求重启指定进程 */
     public void restartProcess(String packageName, String processName, int userId) {
         try {
             IBActivityManagerService service = getService();
@@ -91,21 +97,22 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         }
     }
 
+    /** 启动 Activity（带重试与死亡处理） */
     public void startActivity(Intent intent, int userId) {
         int retryCount = 0;
         final int maxRetries = 3;
-        
+
         while (retryCount < maxRetries) {
             try {
                 IBActivityManagerService service = getService();
                 if (service != null) {
                     service.startActivity(intent, userId);
-                    return; 
+                    return; // 成功即返回
                 } else {
                     Slog.w(TAG, "ActivityManager service is null, retry " + (retryCount + 1) + "/" + maxRetries);
-                    
+
                     try {
-                        Thread.sleep(200 * (retryCount + 1)); 
+                        Thread.sleep(200 * (retryCount + 1)); // 线性退避
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
                         break;
@@ -113,30 +120,31 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
                 }
             } catch (DeadObjectException e) {
                 Slog.w(TAG, "ActivityManager service died, clearing cache and retrying " + (retryCount + 1) + "/" + maxRetries);
-                clearServiceCache(); 
+                clearServiceCache(); // 立即清理缓存
                 try {
-                    Thread.sleep(100); 
+                    Thread.sleep(100); // 小延迟再试
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
                     break;
                 }
             } catch (RemoteException e) {
                 Slog.e(TAG, "RemoteException in startActivity", e);
-                break; 
+                break; // 远端异常不再重试
             } catch (Exception e) {
                 Slog.e(TAG, "Unexpected error in startActivity", e);
                 break;
             }
             retryCount++;
         }
-        
+
         Slog.e(TAG, "Failed to start activity after " + maxRetries + " retries");
     }
 
+    /** 通过 AMS 路径启动 Activity（与系统交互参数） */
     public int startActivityAms(int userId, Intent intent, String resolvedType, IBinder resultTo, String resultWho, int requestCode, int flags, Bundle options) {
         int retryCount = 0;
         final int maxRetries = 3;
-        
+
         while (retryCount < maxRetries) {
             try {
                 IBActivityManagerService service = getService();
@@ -163,11 +171,12 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
             }
             retryCount++;
         }
-        
+
         Slog.e(TAG, "Failed to start activity AMS after " + maxRetries + " retries");
         return -1;
     }
 
+    /** 批量启动 Activities */
     public int startActivities(int userId, Intent[] intent, String[] resolvedType, IBinder resultTo, Bundle options) {
         try {
             IBActivityManagerService service = getService();
@@ -180,10 +189,11 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         return -1;
     }
 
+    /** 启动 Service（支持前台要求） */
     public ComponentName startService(Intent intent, String resolvedType, boolean requireForeground, int userId) {
         int retryCount = 0;
         final int maxRetries = 3;
-        
+
         while (retryCount < maxRetries) {
             try {
                 IBActivityManagerService service = getService();
@@ -210,11 +220,12 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
             }
             retryCount++;
         }
-        
+
         Slog.e(TAG, "Failed to start service after " + maxRetries + " retries");
         return null;
     }
 
+    /** 停止 Service */
     public int stopService(Intent intent, String resolvedType, int userId) {
         try {
             IBActivityManagerService service = getService();
@@ -227,6 +238,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         return -1;
     }
 
+    /** 绑定 Service */
     public Intent bindService(Intent service, IBinder binder, String resolvedType, int userId) {
         try {
             IBActivityManagerService serviceManager = getService();
@@ -239,6 +251,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         return null;
     }
 
+    /** 解绑 Service */
     public void unbindService(IBinder binder, int userId) {
         try {
             IBActivityManagerService service = getService();
@@ -250,6 +263,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         }
     }
 
+    /** 停止 Service Token */
     public void stopServiceToken(ComponentName componentName, IBinder token, int userId) {
         try {
             IBActivityManagerService service = getService();
@@ -261,6 +275,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         }
     }
 
+    /** Service onStartCommand 回调分发 */
     public void onStartCommand(Intent proxyIntent, int userId) {
         try {
             IBActivityManagerService service = getService();
@@ -272,6 +287,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         }
     }
 
+    /** Service onUnbind 回调分发 */
     public UnbindRecord onServiceUnbind(Intent proxyIntent, int userId) {
         try {
             IBActivityManagerService service = getService();
@@ -284,6 +300,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         return null;
     }
 
+    /** Service onDestroy 回调分发 */
     public void onServiceDestroy(Intent proxyIntent, int userId) {
         try {
             IBActivityManagerService service = getService();
@@ -295,6 +312,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         }
     }
 
+    /** 获取 ContentProvider Client binder */
     public IBinder acquireContentProviderClient(ProviderInfo providerInfo) {
         try {
             IBActivityManagerService service = getService();
@@ -314,6 +332,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         return null;
     }
 
+    /** 发送广播 */
     public Intent sendBroadcast(Intent intent, String resolvedType, int userId) {
         try {
             IBActivityManagerService service = getService();
@@ -326,6 +345,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         return null;
     }
 
+    /** 查询 Service binder（不触发绑定） */
     public IBinder peekService(Intent intent, String resolvedType, int userId) {
         try {
             IBActivityManagerService service = getService();
@@ -338,6 +358,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         return null;
     }
 
+    /** Activity 生命周期：创建 */
     public void onActivityCreated(int taskId, IBinder token, IBinder activityRecord) {
         try {
             IBActivityManagerService service = getService();
@@ -349,6 +370,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         }
     }
 
+    /** Activity 生命周期：恢复 */
     public void onActivityResumed(IBinder token) {
         try {
             IBActivityManagerService service = getService();
@@ -360,6 +382,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         }
     }
 
+    /** Activity 生命周期：销毁 */
     public void onActivityDestroyed(IBinder token) {
         try {
             IBActivityManagerService service = getService();
@@ -371,6 +394,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         }
     }
 
+    /** Activity 结束 */
     public void onFinishActivity(IBinder token) {
         try {
             IBActivityManagerService service = getService();
@@ -382,6 +406,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         }
     }
 
+    /** 获取运行中进程信息 */
     public RunningAppProcessInfo getRunningAppProcesses(String callerPackage, int userId) throws RemoteException {
         try {
             return getService().getRunningAppProcesses(callerPackage, userId);
@@ -391,6 +416,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         return null;
     }
 
+    /** 获取运行中服务信息 */
     public RunningServiceInfo getRunningServices(String callerPackage, int userId) throws RemoteException {
         try {
             return getService().getRunningServices(callerPackage, userId);
@@ -400,10 +426,12 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         return null;
     }
 
+    /** 调度广播接收 */
     public void scheduleBroadcastReceiver(Intent intent, PendingResultData pendingResultData, int userId) throws RemoteException {
         getService().scheduleBroadcastReceiver(intent, pendingResultData, userId);
     }
 
+    /** 结束广播 */
     public void finishBroadcast(PendingResultData data) {
         try {
             getService().finishBroadcast(data);
@@ -412,6 +440,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         }
     }
 
+    /** 查询调用包名 */
     public String getCallingPackage(IBinder token, int userId) {
         try {
             return getService().getCallingPackage(token, userId);
@@ -421,6 +450,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         return null;
     }
 
+    /** 查询调用 Activity */
     public ComponentName getCallingActivity(IBinder token, int userId) {
         try {
             return getService().getCallingActivity(token, userId);
@@ -430,6 +460,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         return null;
     }
 
+    /** 生成 IntentSender */
     public void getIntentSender(IBinder target, String packageName, int uid) {
         try {
             getService().getIntentSender(target, packageName, uid, BActivityThread.getUserId());
@@ -438,6 +469,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         }
     }
 
+    /** 查询 IntentSender 对应包名 */
     public String getPackageForIntentSender(IBinder target) {
         try {
             return getService().getPackageForIntentSender(target, BActivityThread.getUserId());
@@ -447,6 +479,7 @@ public class BActivityManager extends BlackManager<IBActivityManagerService> {
         return null;
     }
 
+    /** 查询 IntentSender 对应 uid */
     public int getUidForIntentSender(IBinder target) {
         try {
             return getService().getUidForIntentSender(target, BActivityThread.getUserId());

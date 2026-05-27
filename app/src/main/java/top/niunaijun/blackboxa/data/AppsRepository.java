@@ -24,10 +24,19 @@ import top.niunaijun.blackboxa.bean.InstalledAppBean;
 import top.niunaijun.blackboxa.util.MemoryManager;
 import top.niunaijun.blackboxa.util.ResUtil;
 
+/**
+ * 应用数据仓库。
+ * 负责：
+ * - 预扫描系统已安装应用，过滤系统应用/ABI 不支持/BlackBox 自身
+ * - 查询虚拟用户空间应用列表并按偏好排序
+ * - 安装、卸载、启动、清理应用，并通过 LiveData 回传结果
+ * 线程安全：对 mInstalledList 的访问通过 synchronized 保护。
+ */
 public class AppsRepository {
     private static final String TAG = "AppsRepository";
     private final List<AppInfo> mInstalledList = new ArrayList<>();
 
+    /** 安全获取应用名称，异常时回落为包名。 */
     private String safeLoadAppLabel(ApplicationInfo applicationInfo) {
         try {
             CharSequence label = BlackBoxCore.getPackageManager().getApplicationLabel(applicationInfo);
@@ -38,6 +47,9 @@ public class AppsRepository {
         }
     }
 
+    /**
+     * 内存友好的图标加载：必要时缩放到 96x96，内存紧张或异常时返回 null 以避免 OOM。
+     */
     private Drawable safeLoadAppIcon(ApplicationInfo applicationInfo) {
         try {
             if (MemoryManager.shouldSkipIconLoading()) {
@@ -67,6 +79,10 @@ public class AppsRepository {
         }
     }
 
+    /**
+     * 预扫描系统已安装应用并缓存到 mInstalledList。
+     * 过滤：系统应用、ABI 不支持、BlackBox 自身应用。
+     */
     public void previewInstallList() {
         try {
             synchronized (mInstalledList) {
@@ -104,6 +120,14 @@ public class AppsRepository {
         }
     }
 
+    /**
+     * 将预扫描结果映射为 InstalledAppBean 列表，并标记 userID 的安装状态，
+     * 通过 LiveData 发送 loading 和结果。
+     *
+     * @param userID 目标用户 ID
+     * @param loadingLiveData 加载状态 LiveData
+     * @param appsLiveData 应用列表 LiveData
+     */
     public void getInstalledAppList(int userID,
                                     MutableLiveData<Boolean> loadingLiveData,
                                     MutableLiveData<List<InstalledAppBean>> appsLiveData) {
@@ -132,6 +156,15 @@ public class AppsRepository {
         }
     }
 
+    /**
+     * 获取虚拟用户空间的安装列表并按偏好排序（SharedPreferences: AppList{userId}）。
+     * - 内存紧张时尝试触发 GC
+     * - 获取安装列表最多重试 3 次
+     * 结果通过 appsLiveData.postValue 返回。
+     *
+     * @param userId 目标虚拟用户 ID
+     * @param appsLiveData 应用列表 LiveData
+     */
     public void getVmInstallList(int userId, MutableLiveData<List<AppInfo>> appsLiveData) {
         try {
             if (MemoryManager.isMemoryCritical()) {
@@ -249,6 +282,15 @@ public class AppsRepository {
         }
     }
 
+    /**
+     * 安装 APK（支持文件路径或 URL）。
+     * 保护：阻止在 BlackBox 内安装 BlackBox 自身以避免递归/安全问题。
+     * 成功会更新排序列表并返回 R.string.install_success，失败返回具体错误。
+     *
+     * @param source 本地路径或 URL
+     * @param userId 目标用户 ID
+     * @param resultLiveData 结果消息 LiveData
+     */
     public void installApk(String source, int userId, MutableLiveData<String> resultLiveData) {
         try {
             if (source.contains("blackbox") || source.contains("niunaijun") || source.contains("vspace") || source.contains("virtual")) {
@@ -280,7 +322,7 @@ public class AppsRepository {
             }
             Log.e(TAG,"installApk() 安装成功: "+installResult.toString());
 
-            // installResult is a Kotlin data class in the core; use reflection-friendly accessors
+            // installResult 是 core 中的 Kotlin 数据类，使用反射访问属性
             boolean success;
             String packageName = null;
             String msg = null;
@@ -300,7 +342,7 @@ public class AppsRepository {
                 success = false;
             }
 
-            if (success) { //安装成功
+            if (success) { // 安装成功
                 Log.e(TAG,"installApk() 安装成功", new RuntimeException());
                 if (packageName != null) updateAppSortList(userId, packageName, true);
                 resultLiveData.postValue(ResUtil.getString(R.string.install_success));
@@ -316,6 +358,13 @@ public class AppsRepository {
         }
     }
 
+    /**
+     * 卸载应用（userID 作用域），并更新排序与用户清理。
+     *
+     * @param packageName 包名
+     * @param userID 用户 ID
+     * @param resultLiveData 结果消息 LiveData
+     */
     public void unInstall(String packageName, int userID, MutableLiveData<String> resultLiveData) {
         try {
             BlackBoxCore.get().uninstallPackageAsUser(packageName, userID);
@@ -328,6 +377,10 @@ public class AppsRepository {
         }
     }
 
+    /**
+     * 启动应用（userId 作用域）。
+     * 结果通过 launchLiveData 返回。
+     */
     public void launchApk(String packageName, int userId, MutableLiveData<Boolean> launchLiveData) {
         try {
             boolean result = BlackBoxCore.get().launchApk(packageName, userId);
@@ -338,6 +391,13 @@ public class AppsRepository {
         }
     }
 
+    /**
+     * 清理应用数据（userID 作用域）。
+     *
+     * @param packageName 包名
+     * @param userID 用户 ID
+     * @param resultLiveData 结果消息 LiveData
+     */
     public void clearApkData(String packageName, int userID, MutableLiveData<String> resultLiveData) {
         try {
             BlackBoxCore.get().clearPackage(packageName, userID);
@@ -348,6 +408,9 @@ public class AppsRepository {
         }
     }
 
+    /**
+     * 清理无应用的尾部用户：若最后一个用户已无安装应用，则删除并移除其备注/排序缓存，递归继续。
+     */
     private void scanUser() {
         try {
             BlackBoxCore blackBoxCore = BlackBoxCore.get();
@@ -375,6 +438,10 @@ public class AppsRepository {
         }
     }
 
+    /**
+     * 维护“AppList{userID}”顺序缓存。
+     * @param isAdd true 表示新增/追加；false 表示移除
+     */
     private void updateAppSortList(int userID, String pkg, boolean isAdd) {
         try {
             String savedSortList = AppManager.getMRemarkSharedPreferences().getString("AppList" + userID, "");
@@ -390,6 +457,9 @@ public class AppsRepository {
         }
     }
 
+    /**
+     * 批量更新排序缓存“AppList{userID}”，按 dataList 顺序保存包名。
+     */
     public void updateApkOrder(int userID, List<AppInfo> dataList) {
         try {
             List<String> pkgs = new ArrayList<>();

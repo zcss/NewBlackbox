@@ -21,15 +21,20 @@ import top.niunaijun.blackbox.utils.FileUtils;
  * 包设置：保存包级别安装选项与各 userId 的安装/停止/隐藏状态，支持序列化持久化到 package.conf。
  */
 public class BPackageSettings implements Parcelable {
+    /** 包信息（包含组件/签名/元数据等），同时作为 mExtras 的宿主 */
     public BPackage pkg;
+    /** 分配给该包/共享用户的 appId（uid），来源 Settings.registerAppIdLPw */
     public int appId;
+    /** 安装选项（系统/存储/URI 等标志位） */
     public InstallOption installOption;
+    /** 每个 userId 的安装/停止/隐藏状态 */
     public Map<Integer, BPackageUserState> userState = new HashMap<>();
     static final BPackageUserState DEFAULT_USER_STATE = new BPackageUserState();
 
     public BPackageSettings() {
     }
 
+    /** 返回所有用户状态的副本列表。 */
     public List<BPackageUserState> getUserState() {
         return new ArrayList<>(userState.values());
     }

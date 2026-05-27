@@ -9,6 +9,7 @@ import java.util.Iterator;
 /**
  * 只读数组Set：轻量迭代器以最小开销遍历不可变数组。
  */
+/** 不可变只读数组包装的 Set；迭代器可复用，size 为底层数组长度。 */
 public final class FastImmutableArraySet<T> extends AbstractSet<T> {
     FastIterator<T> mIterator;
     T[] mContents;

@@ -41,6 +41,7 @@ public class ComponentResolver {
     public ComponentResolver() {
     }
 
+    /** 将包内四大组件注册进解析索引（需持有 mLock）。 */
     void addAllComponents(BPackage pkg) {
         final ArrayList<BPackage.ActivityIntentInfo> newIntents = new ArrayList<>();
         synchronized (mLock) {
@@ -51,6 +52,7 @@ public class ComponentResolver {
         }
     }
 
+    /** 从解析索引移除该包的所有组件（需持有 mLock）。 */
     void removeAllComponents(BPackage pkg) {
         synchronized (mLock) {
             removeAllComponentsLocked(pkg);

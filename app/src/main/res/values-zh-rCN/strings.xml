@@ -13,6 +13,7 @@
     <string name="setting">软件设置</string>
     <string name="permission_setting">权限设置</string>
     <string name="fake_location">虚拟定位(预览版)</string>
+    <string name="path_proxy">目录代理</string>
     <string name="real_location">真实位置</string>
     <string name="set_location">虚拟定位设置成功:%s-%s</string>
     <string name="close_fake_location">关闭虚拟定位</string>
@@ -54,6 +55,10 @@
     <string name="restart_module">重新启动软件修改才能生效</string>
     <string name="cannot_create_shortcut">该桌面不支持创建快捷方式</string>
     <string name="uninstall_module_toast">Xposed模块请在管理界面卸载</string>
+    <string name="use_vpn_network">使用VPN网络</string>
+    <string name="use_vpn_network_summary">通过VPN路由沙盒化应用的流量（可能改善网络访问）</string>
+    <string name="disable_flag_secure">禁用安全标志</string>
+    <string name="disable_flag_secure_summary">允许在应用程序中进行屏幕截图和屏幕录制</string>
     <string name="other">其它</string>
     <string name="daemon_enable">开启守护进程</string>
     <string name="gms_manager">GMS管理</string>
@@ -63,4 +68,6 @@
     <string name="disable_gms">关闭服务</string>
     <string name="disable_gms_hint">是否清除当前Google服务环境？Google服务数据将被清空。</string>
     <string name="no_gms">当前手机没有Google服务环境。</string>
+    <string name="upload_debug">将调试日志上传给开发人员</string>
+
 </resources>

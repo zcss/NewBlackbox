@@ -76,6 +76,15 @@ import top.niunaijun.blackbox.utils.LogSender;
 
 @SuppressLint({"StaticFieldLeak", "NewApi"})
 @SuppressWarnings({"unchecked", "deprecation"})
+/**
+ * BlackBox 核心入口与对外 API 门面。
+ * 职责：
+ * - 进程角色判定与黑域（server/BAppClient/main）初始化编排
+ * - 通过 ContentProvider/ServiceManager 取得各系统服务 Binder
+ * - 对外提供安装/卸载/查询/启动等用户态 API（按 userId 隔离）
+ * - 管理 GMS 安装状态以及必要的前置检查与回退路径
+ * 注意：仅在必要位置做兜底，避免引入循环依赖；大量异常以日志告警并提供 fallback。
+ */
 public class BlackBoxCore extends ClientConfiguration {
     public static final String TAG = "BlackBoxCore";
 
@@ -829,7 +838,11 @@ public class BlackBoxCore extends ClientConfiguration {
         }
     }
 
-    public void doAttachBaseContext(Context context,
+    /**
+ * App 启动早期入口：绑定 Context、保存 ClientConfiguration、安装系统 Hook、初始化通知渠道，
+ * 并按进程名设置 ProcessType，按配置启动守护服务等。
+ */
+public void doAttachBaseContext(Context context,
                                    ClientConfiguration clientConfiguration) {
         try {
             
@@ -962,7 +975,11 @@ public class BlackBoxCore extends ClientConfiguration {
         HookManager.get().init();
     }
 
-    public void doCreate() {
+    /**
+ * App onCreate 阶段入口：保证黑进程就绪、按顺序初始化 NativeCore/ServiceManager/ActivityThread 钩子，
+ * 非 server 进程尝试初始化 BlackManager，并对超时与失败提供日志与兜底。
+ */
+public void doCreate() {
         
         installSystemHooks();
         
@@ -1095,7 +1112,11 @@ public class BlackBoxCore extends ClientConfiguration {
         return StoragePermissionHelper.REQUEST_CODE_MANAGE_STORAGE;
     }
 
-    public boolean launchApk(String packageName, int userId) {
+    /**
+ * 在指定 userId 下启动包名对应的应用，必要时提示存储权限；
+ * 通过 BPackageManager 获取启动 Intent 并调度到正确进程。
+ */
+public boolean launchApk(String packageName, int userId) {
         onBeforeMainLaunchApk(packageName, userId);
         
         
@@ -1134,7 +1155,11 @@ public class BlackBoxCore extends ClientConfiguration {
         getBPackageManager().uninstallPackage(packageName);
     }
 
-    public InstallResult installPackageAsUser(String packageName, int userId) {
+    /**
+ * 按包名安装到指定 userId（通过系统 PM 解析 sourceDir，再委托 BPackageManager）。
+ * 安全：禁止在 BlackBox 内克隆 BlackBox 自身。
+ */
+public InstallResult installPackageAsUser(String packageName, int userId) {
         try {
             
             if (packageName.equals(getHostPkg())) {
@@ -1149,7 +1174,10 @@ public class BlackBoxCore extends ClientConfiguration {
         }
     }
 
-    public InstallResult installPackageAsUser(File apk, int userId) {
+    /**
+ * 按 APK 文件安装到指定 userId，存储模式安装；如 APK 包名是宿主则直接禁止。
+ */
+public InstallResult installPackageAsUser(File apk, int userId) {
         
         try {
             PackageInfo packageInfo = getPackageManager().getPackageArchiveInfo(apk.getAbsolutePath(), 0);
@@ -1167,7 +1195,10 @@ public class BlackBoxCore extends ClientConfiguration {
         return getBPackageManager().installPackageAsUser(apk.getAbsolutePath(), InstallOption.installByStorage(), userId);
     }
 
-    public InstallResult installPackageAsUser(Uri apk, int userId) {
+    /**
+ * 按 APK Uri 安装到指定 userId，存储模式（Uri 文件）安装。
+ */
+public InstallResult installPackageAsUser(Uri apk, int userId) {
         
         return getBPackageManager().installPackageAsUser(apk.toString(), InstallOption.installByStorage().makeUriFile(), userId);
     }
@@ -1176,15 +1207,20 @@ public class BlackBoxCore extends ClientConfiguration {
 
 
 
-    public List<ApplicationInfo> getInstalledApplications(int flags, int userId) {
+    /**
+ * 查询指定 userId 的虚拟空间内已安装应用列表（委托 BPackageManager）。
+ */
+public List<ApplicationInfo> getInstalledApplications(int flags, int userId) {
         return getBPackageManager().getInstalledApplications(flags, userId);
     }
 
-    public List<PackageInfo> getInstalledPackages(int flags, int userId) {
+    /** 查询指定 userId 的已安装包信息列表。 */
+public List<PackageInfo> getInstalledPackages(int flags, int userId) {
         return getBPackageManager().getInstalledPackages(flags, userId);
     }
 
-    public void clearPackage(String packageName, int userId) {
+    /** 清理指定 userId 下包的数据。 */
+public void clearPackage(String packageName, int userId) {
         BPackageManager.get().clearPackage(packageName, userId);
     }
 
@@ -1192,7 +1228,8 @@ public class BlackBoxCore extends ClientConfiguration {
         BPackageManager.get().stopPackage(packageName, userId);
     }
 
-    public List<BUserInfo> getUsers() {
+    /** 返回所有虚拟用户列表。 */
+public List<BUserInfo> getUsers() {
         return BUserManager.get().getUsers();
     }
 
@@ -1216,19 +1253,23 @@ public class BlackBoxCore extends ClientConfiguration {
         mAppLifecycleCallbacks.add(appLifecycleCallback);
     }
 
-    public boolean isSupportGms() {
+    /** 是否支持 GMS 能力。 */
+public boolean isSupportGms() {
         return GmsCore.isSupportGms();
     }
 
-    public boolean isInstallGms(int userId) {
+    /** 指定 userId 是否已安装 GMS。 */
+public boolean isInstallGms(int userId) {
         return GmsCore.isInstalledGoogleService(userId);
     }
 
-    public InstallResult installGms(int userId) {
+    /** 为指定 userId 安装 GApps。 */
+public InstallResult installGms(int userId) {
         return GmsCore.installGApps(userId);
     }
 
-    public boolean uninstallGms(int userId) {
+    /** 为指定 userId 卸载 GApps，返回卸载后是否已不再安装。 */
+public boolean uninstallGms(int userId) {
         GmsCore.uninstallGApps(userId);
         return !GmsCore.isInstalledGoogleService(userId);
     }

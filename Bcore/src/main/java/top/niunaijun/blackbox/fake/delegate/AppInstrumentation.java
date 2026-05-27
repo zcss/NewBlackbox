@@ -34,10 +34,13 @@ import top.niunaijun.blackbox.utils.compat.ContextCompat;
  */
 public final class AppInstrumentation extends BaseInstrumentationDelegate implements IInjectHook {
 
+    /** 日志 TAG */
     private static final String TAG = AppInstrumentation.class.getSimpleName();
 
+    /** 单例 */
     private static AppInstrumentation sAppInstrumentation;
 
+    /** 获取单例 */
     public static AppInstrumentation get() {
         if (sAppInstrumentation == null) {
             synchronized (AppInstrumentation.class) {
@@ -65,6 +68,7 @@ public final class AppInstrumentation extends BaseInstrumentationDelegate implem
         }
     }
 
+    /** 获取当前线程的 Instrumentation */
     private Instrumentation getCurrInstrumentation() {
         Object currentActivityThread = BlackBoxCore.mainThread();
         return BRActivityThread.get(currentActivityThread).mInstrumentation();
@@ -75,6 +79,9 @@ public final class AppInstrumentation extends BaseInstrumentationDelegate implem
         return !checkInstrumentation(getCurrInstrumentation());
     }
 
+    /**
+     * 检查当前 Instrumentation 是否已被本代理包裹（或链式代理），避免重复注入。
+     */
     private boolean checkInstrumentation(Instrumentation instrumentation) {
         if (instrumentation instanceof AppInstrumentation) {
             return true;
@@ -104,10 +111,17 @@ public final class AppInstrumentation extends BaseInstrumentationDelegate implem
         return false;
     }
 
+    /** 确保 HCallback 环境已注入 */
     private void checkHCallback() {
         HookManager.get().checkEnv(HCallbackProxy.class);
     }
 
+    /**
+     * Activity onCreate 前置修复：
+     * - 打开指定 App 的调试日志；
+     * - 修复 Context/Activity 环境；
+     * - 应用主题与方向。
+     */
     private void checkActivity(Activity activity) {
         Log.d(TAG, "callActivityOnCreate: " + activity.getClass().getName());
         HackAppUtils.enableQQLogOutput(activity.getPackageName(), activity.getClassLoader());
@@ -125,7 +139,6 @@ public final class AppInstrumentation extends BaseInstrumentationDelegate implem
     @Override
     public Application newApplication(ClassLoader cl, String className, Context context) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         ContextCompat.fix(context);
-
         return super.newApplication(cl, className, context);
     }
 
@@ -147,6 +160,9 @@ public final class AppInstrumentation extends BaseInstrumentationDelegate implem
         super.callApplicationOnCreate(app);
     }
 
+    /**
+     * 兼容 ClassNotFound 的 newActivity：优先委托父类，失败回退到系统 Instrumentation。
+     */
     public Activity newActivity(ClassLoader cl, String className, Intent intent) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         try {
             return super.newActivity(cl, className, intent);

@@ -13,6 +13,7 @@
     <string name="real_location">Real Location</string>
     <string name="set_location">Set Fake Location Successfully:%s-%s</string>
     <string name="close_fake_location">Disable FakeLocation</string>
+    <string name="path_proxy">Directory Proxy</string>
     <string name="close_app_fake_location">Disable FakeLocation for %s</string>
     <string name="close_fake_location_success">Disable FakeLocation for %s Successfully</string>
     <string name="setting">Setting</string>
@@ -66,4 +67,5 @@
     <string name="disable_gms">Disable Service</string>
     <string name="disable_gms_hint">Clear the current Google service environment? Google service data will be cleared.</string>
     <string name="no_gms">Currently, there is no Google service environment on mobile phones.</string>
+    <string name="upload_debug">Upload debug logs to developer</string>
 </resources>

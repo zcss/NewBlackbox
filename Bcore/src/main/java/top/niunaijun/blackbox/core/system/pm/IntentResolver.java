@@ -28,6 +28,10 @@ import top.niunaijun.blackbox.utils.Slog;
 /**
  * Intent 解析器基类：维护多维索引（type/scheme/action）并生成候选列表，支持按userId筛选与优先级排序。
  */
+/**
+ * 解析器基类，维护多维索引（类型/基础类型/通配/scheme/action/typedAction）并按 userId 查询。
+ * 子类需实现 isPackageForFilter/newArray/newResult 等，结果按优先级排序。
+ */
 public abstract class IntentResolver<F extends BPackage.IntentInfo, R extends Object> {
     final private static String TAG = "IntentResolver";
     final private static boolean DEBUG = false;

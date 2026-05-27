@@ -23,19 +23,26 @@ import top.niunaijun.blackbox.proxy.record.ProxyBroadcastRecord;
  * - 维护 IBinder→Delegate 的弱引用映射与死亡回调，避免泄漏。
  */
 public class InnerReceiverDelegate extends IIntentReceiver.Stub {
+    /** 日志 TAG */
     public static final String TAG = "InnerReceiverDelegate";
 
+    /** IBinder -> 代理 的缓存表 */
     private static final Map<IBinder, InnerReceiverDelegate> sInnerReceiverDelegate = new HashMap<>();
+    /** 原始 IIntentReceiver 的弱引用，避免泄漏 */
     private final WeakReference<IIntentReceiver> mIntentReceiver;
 
     private InnerReceiverDelegate(IIntentReceiver iIntentReceiver) {
         this.mIntentReceiver = new WeakReference<>(iIntentReceiver);
     }
 
+    /** 通过 binder 查找已创建的代理 */
     public static InnerReceiverDelegate getDelegate(IBinder iBinder) {
         return sInnerReceiverDelegate.get(iBinder);
     }
 
+    /**
+     * 创建 IIntentReceiver 的代理，注册死亡回调并缓存。
+     */
     public static IIntentReceiver createProxy(IIntentReceiver base) {
         if (base instanceof InnerReceiverDelegate) {
             return base;
@@ -60,6 +67,12 @@ public class InnerReceiverDelegate extends IIntentReceiver.Stub {
         return delegate;
     }
 
+    /**
+     * 接收广播回调：
+     * - 修正 extras 的类加载器；
+     * - 若存在代理记录，则还原原始 Intent；
+     * - 将回调转发给原始 IIntentReceiver。
+     */
     @Override
     public void performReceive(Intent intent, int resultCode, String data, Bundle extras, boolean ordered, boolean sticky, int sendingUser) throws RemoteException {
         intent.setExtrasClassLoader(BlackBoxCore.getApplication().getClassLoader());

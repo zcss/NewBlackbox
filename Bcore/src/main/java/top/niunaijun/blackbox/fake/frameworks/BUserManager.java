@@ -21,8 +21,10 @@ import top.niunaijun.blackbox.utils.Slog;
  */
 public class BUserManager extends BlackManager<IBUserManagerService> {
     private static final String TAG = "BUserManager";
+    /** 单例 */
     private static final BUserManager sUserManager = new BUserManager();
 
+    /** 获取单例 */
     public static BUserManager get() {
         return sUserManager;
     }
@@ -32,6 +34,7 @@ public class BUserManager extends BlackManager<IBUserManagerService> {
         return ServiceManager.USER_MANAGER;
     }
 
+    /** 创建用户 */
     public BUserInfo createUser(int userId) {
         try {
             IBUserManagerService service = getService();
@@ -60,6 +63,7 @@ public class BUserManager extends BlackManager<IBUserManagerService> {
         return null;
     }
 
+    /** 删除用户 */
     public void deleteUser(int userId) {
         try {
             IBUserManagerService service = getService();
@@ -87,6 +91,7 @@ public class BUserManager extends BlackManager<IBUserManagerService> {
         }
     }
 
+    /** 获取所有用户 */
     public List<BUserInfo> getUsers() {
         try {
             IBUserManagerService service = getService();

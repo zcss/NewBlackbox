@@ -34,8 +34,8 @@ import top.niunaijun.blackbox.utils.Reflector;
  */
 public class BaseInstrumentationDelegate extends Instrumentation {
 
+    /** 被代理的系统 Instrumentation */
     protected Instrumentation mBaseInstrumentation;
-
 
     @Override
     public void onCreate(Bundle arguments) {
@@ -67,17 +67,11 @@ public class BaseInstrumentationDelegate extends Instrumentation {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mBaseInstrumentation.addResults(results);
         } else {
-            
+            // 兼容旧版：通过 sendStatus + 本地存储兜底
             try {
-                
                 if (results != null && !results.isEmpty()) {
-                    
                     mBaseInstrumentation.sendStatus(0, results);
-                    
-                    
                     storeResultsForOlderVersions(results);
-                    
-                    
                     storeResultsInPreferences(results);
                 }
             } catch (Exception e) {
@@ -85,33 +79,27 @@ public class BaseInstrumentationDelegate extends Instrumentation {
             }
         }
     }
-    
-    
+
+    // 旧版本结果存储：静态存储（若存在）
     private void storeResultsForOlderVersions(Bundle results) {
         try {
-            
             Class<?> resultsStorageClass = Class.forName("top.niunaijun.blackbox.utils.ResultsStorage");
             java.lang.reflect.Method storeMethod = resultsStorageClass.getMethod("storeResults", String.class, Bundle.class);
-            
-            
             String resultKey = "results_" + System.currentTimeMillis() + "_" + android.os.Process.myPid();
             storeMethod.invoke(null, resultKey, results);
-            
             android.util.Log.d("BaseInstrumentationDelegate", "Stored results with key: " + resultKey);
         } catch (Exception e) {
             android.util.Log.w("BaseInstrumentationDelegate", "Failed to store results in static storage: " + e.getMessage());
         }
     }
-    
-    
+
+    // 旧版本结果存储：SharedPreferences 兜底
     private void storeResultsInPreferences(Bundle results) {
         try {
             Context context = getContext();
             if (context != null) {
                 android.content.SharedPreferences prefs = context.getSharedPreferences("instrumentation_results", Context.MODE_PRIVATE);
                 android.content.SharedPreferences.Editor editor = prefs.edit();
-                
-                
                 for (String key : results.keySet()) {
                     Object value = results.get(key);
                     if (value instanceof String) {
@@ -126,11 +114,8 @@ public class BaseInstrumentationDelegate extends Instrumentation {
                         editor.putFloat(key, (Float) value);
                     }
                 }
-                
-                
                 editor.putLong("timestamp", System.currentTimeMillis());
                 editor.putInt("pid", android.os.Process.myPid());
-                
                 editor.apply();
                 android.util.Log.d("BaseInstrumentationDelegate", "Stored results in SharedPreferences");
             }
@@ -443,6 +428,9 @@ public class BaseInstrumentationDelegate extends Instrumentation {
         return mBaseInstrumentation.getUiAutomation();
     }
 
+    /**
+     * 兼容多签名/多版本的 execStartActivity，反射查找并调用底层实现。
+     */
     public ActivityResult execStartActivity(Context context, IBinder binder, IBinder binder1, Activity activity, Intent intent, int i, Bundle bundle) throws Throwable {
         return invokeExecStartActivity(mBaseInstrumentation,
                 Context.class,

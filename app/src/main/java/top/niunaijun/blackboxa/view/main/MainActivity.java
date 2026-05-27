@@ -31,6 +31,7 @@ import top.niunaijun.blackboxa.util.Resolution;
 import top.niunaijun.blackboxa.view.apps.AppsFragment;
 import top.niunaijun.blackboxa.view.base.LoadingActivity;
 import top.niunaijun.blackboxa.view.fake.FakeManagerActivity;
+import top.niunaijun.blackboxa.view.fake.FakePathProxyActivity;
 import top.niunaijun.blackboxa.view.list.ListActivity;
 import top.niunaijun.blackboxa.view.setting.SettingActivity;
 
@@ -398,6 +399,11 @@ public class MainActivity extends LoadingActivity {
             } else if (id == R.id.fake_location) {
                 Intent intent = new Intent(this, FakeManagerActivity.class);
                 intent.putExtra("userID", 0);
+                startActivity(intent);
+            } else if (id == R.id.path_proxy) {
+                Log.d(TAG,"目录代理");
+                Intent intent = new Intent(this, FakePathProxyActivity.class);
+                intent.putExtra("userID", currentUser);
                 startActivity(intent);
             }
             return true;
