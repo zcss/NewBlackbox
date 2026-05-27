@@ -448,6 +448,35 @@ public class BPackageManager extends BlackManager<IBPackageManagerService> {
     }
 
     /** 查询可响应广播 */
+    public List<ResolveInfo> queryBroadcastReceivers(Intent intent, int flags, String resolvedType, int userId) {
+        try {
+            IBPackageManagerService service = getService();
+            if (service != null) {
+                return service.queryBroadcastReceivers(intent, flags, resolvedType, userId);
+            } else {
+                Log.w(TAG, "PackageManager service is null, returning empty list for queryBroadcastReceivers");
+                return Collections.emptyList();
+            }
+        } catch (android.os.DeadObjectException e) {
+            Log.w(TAG, "PackageManager service died during queryBroadcastReceivers, clearing cache and retrying", e);
+            clearServiceCache(); 
+            try {
+                
+                IBPackageManagerService service = getService();
+                if (service != null) {
+                    return service.queryBroadcastReceivers(intent, flags, resolvedType, userId);
+                }
+            } catch (Exception retryException) {
+                Log.e(TAG, "Retry failed for queryBroadcastReceivers", retryException);
+            }
+            return Collections.emptyList();
+        } catch (RemoteException e) {
+            Log.e(TAG, "RemoteException in queryBroadcastReceivers", e);
+            crash(e);
+        }
+        return Collections.emptyList();
+    }
+
     public List<ProviderInfo> queryContentProviders(String processName, int uid, int flags, int userId) {
         try {
             IBPackageManagerService service = getService();
