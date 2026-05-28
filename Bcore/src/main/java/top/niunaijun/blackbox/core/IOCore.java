@@ -18,6 +18,7 @@ import java.util.Set;
 
 import top.niunaijun.blackbox.BlackBoxCore;
 
+import top.niunaijun.blackbox.app.BActivityThread;
 import top.niunaijun.blackbox.core.env.BEnvironment;
 import top.niunaijun.blackbox.utils.FileUtils;
 import top.niunaijun.blackbox.core.settings.ProxySettingsCore;
@@ -33,8 +34,11 @@ public class IOCore {
     public static final String TAG = "IOCore";
 
     private static final IOCore sIOCore = new IOCore();
+    // 重定向规则前缀Trie，存“原始路径前缀”，用于最长前缀匹配查找
     private static final TrieTree mTrieTree = new TrieTree();
+    // 黑名单前缀Trie，命中则直接返回原路径或固定路径（跳过重定向）
     private static final TrieTree sBlackTree = new TrieTree();
+    // 前缀到目标路径的映射表：key=原始前缀，value=重定向后的目标根路径
     private final Map<String, String> mRedirectMap = new LinkedHashMap<>();
 
     private static final Map<String, Map<String, String>> sCachePackageRedirect = new HashMap<>();
@@ -49,7 +53,9 @@ public class IOCore {
         if (TextUtils.isEmpty(origPath) || TextUtils.isEmpty(redirectPath) || mRedirectMap.get(origPath) != null)
             return;
         
+        // 记录原始路径前缀到Trie，供查找时做最长前缀匹配
         mTrieTree.add(origPath);
+        // 建立前缀->目标路径的映射，匹配后用它做字符串替换
         mRedirectMap.put(origPath, redirectPath);
         File redirectFile = new File(redirectPath);
         if (!redirectFile.exists()) {
@@ -67,36 +73,29 @@ public class IOCore {
 
     /** 查询重定向结果：优先黑名单，随后最长前缀匹配替换；在映射前先判断是否启用路径代理 */
     public String redirectPath(String path) {
-        Slog.d(TAG,"redirectPath() ：" + path);
+        String pkg = BlackBoxCore.getAppPackageName();
+        int userId = BlackBoxCore.getUserId();
+        Slog.d(TAG,"redirectPath() ：" + path+ " pkg: "+pkg + " userId: "+userId);
         if (path.contains("/blackbox/")) { // 主程序不做替换
             Slog.d(TAG,"redirectPath() blackbox 主程序");
             return path;
         }
-        if (BlackBoxCore.get().isBlackProcess()) {
-            Slog.d(TAG,"redirectPath() 主程序");
-            return path;
-        }
         if (TextUtils.isEmpty(path))
             return path;
-        String pkg = BlackBoxCore.getAppPackageName();
-        if (TextUtils.isEmpty(pkg) && BlackBoxCore.getContext() != null) {
-            pkg = BlackBoxCore.getContext().getPackageName();
-        }
         Slog.w(TAG,"pkg ：" + pkg);
         if (pkg != null && pkg.contains("top.niunaijun.blackbox")){
             Slog.w(TAG,"redirectPath() pkg 主程序");
             return path;
         }
         // 用户/包名维度的开关：未开启路径代理则直接返回原路径
-        int userId = BlackBoxCore.getUserId();
         Slog.d(TAG,"userId ：" + userId);
 
-        if (!ProxySettingsCore.isPathEnabled(userId, pkg)) {
-            Slog.w(TAG,"pkg ： 不需要替换路径");
-            return path;
-        }
+//        if (!ProxySettingsCore.isPathEnabled(userId, pkg)) {
+//            Slog.w(TAG,"pkg ： 不需要替换路径");
+//            return path;
+//        }
 
-        Slog.e(TAG,"开始从");
+        Slog.e(TAG,"开始替换");
         String search = sBlackTree.search(path);
         if (!TextUtils.isEmpty(search))
             return search;
@@ -127,6 +126,7 @@ public class IOCore {
         if (!ProxySettingsCore.isPathEnabled(userId, pkg)) {
             return path;
         }
+        // 规则匹配：使用Trie做最长前缀查找，命中后用 mRedirectMap 进行替换
         String key = mTrieTree.search(path);
         if (!TextUtils.isEmpty(key))
             path = path.replace(key, Objects.requireNonNull(rule.get(key)));
@@ -151,7 +151,7 @@ public class IOCore {
         Map<String, String> rule = new LinkedHashMap<>();
         Set<String> blackRule = new HashSet<>();
         String packageName = context.getPackageName();
-
+        Slog.e(TAG,"enableRedirect() packageName： "+packageName);
         try {
             ApplicationInfo packageInfo = BlackBoxCore.getBPackageManager().getApplicationInfo(packageName, PackageManager.GET_META_DATA, BlackBoxCore.getUserId());
             int systemUserId = BlackBoxCore.getHostUserId();

@@ -92,16 +92,25 @@ import top.niunaijun.blackbox.core.system.JarManager;
  * 注意：只添加必要说明，避免噪音。
  */
 public class BActivityThread extends IBActivityThread.Stub {
+    // 日志TAG
     public static final String TAG = "BActivityThread";
 
+    // 单例引用：虚拟ActivityThread
     private static BActivityThread sBActivityThread;
+    // 已绑定应用的运行时信息（LoadedApk等）
     private AppBindData mBoundApplication;
+    // 当前进程中的 Application 实例
     private Application mInitialApplication;
+    // BlackBox 虚拟应用的配置信息（包名/进程名/userId等）
     private AppConfig mAppConfig;
+    // 需要在该进程安装的 Provider 列表
     private final List<ProviderInfo> mProviders = new ArrayList<>();
+    // 主线程 Handler（调度组件生命周期等）
     private final Handler mH = BlackBoxCore.get().getHandler();
+    // 保护 mAppConfig 访问的锁
     private static final Object mConfigLock = new Object();
 
+    // 是否已创建 BActivityThread 单例
     public static boolean isThreadInit() {
         return sBActivityThread != null;
     }
@@ -125,10 +134,12 @@ public class BActivityThread extends IBActivityThread.Stub {
         }
     }
 
+    // 返回当前进程需要安装的 Provider 列表
     public static List<ProviderInfo> getProviders() {
         return currentActivityThread().mProviders;
     }
 
+    // 获取虚拟应用的进程名（优先 AppConfig）
     public static String getAppProcessName() {
         if (getAppConfig() != null) {
             return getAppConfig().processName;
@@ -139,6 +150,7 @@ public class BActivityThread extends IBActivityThread.Stub {
         }
     }
 
+    // 获取虚拟应用的包名（优先 AppConfig）
     public static String getAppPackageName() {
         if (getAppConfig() != null) {
             return getAppConfig().packageName;
@@ -149,35 +161,43 @@ public class BActivityThread extends IBActivityThread.Stub {
         }
     }
 
+    // 返回当前进程的 Application
     public static Application getApplication() {
         return currentActivityThread().mInitialApplication;
     }
 
+    // 返回 BlackBox 为该应用分配的虚拟进程ID（bpid）
     public static int getAppPid() {
         return getAppConfig() == null ? -1 : getAppConfig().bpid;
     }
 
+    // 返回虚拟UID（buid）
     public static int getBUid() {
         return getAppConfig() == null ? BUserHandle.AID_APP_START : getAppConfig().buid;
     }
 
+    // 从 buid 计算的 appId（多用户分离）
     public static int getBAppId() {
         return BUserHandle.getAppId(getBUid());
     }
 
+    // 当前调用方的虚拟UID（用于跨进程调用场景）
     public static int getCallingBUid() {
         return getAppConfig() == null ? BlackBoxCore.getHostUid() : getAppConfig().callingBUid;
     }
 
+    // 宿主侧 UID（或虚拟进程绑定的真实UID）
     public static int getUid() {
         return getAppConfig() == null ? -1 : getAppConfig().uid;
     }
 
+    // 当前虚拟用户ID
     public static int getUserId() {
         return getAppConfig() == null ? 0 : getAppConfig().userId;
     }
 
     /** 进程级初始化：绑定AppConfig并监听死亡，防多包混用 */
+    // 进程级初始化：绑定 AppConfig，保护单进程只承载一个包
     public void initProcess(AppConfig appConfig) {
         synchronized (mConfigLock) {
             if (this.mAppConfig != null && !this.mAppConfig.packageName.equals(appConfig.packageName)) {
@@ -205,11 +225,13 @@ public class BActivityThread extends IBActivityThread.Stub {
         }
     }
 
+    // 是否已完成 bindApplication
     public boolean isInit() {
         return mBoundApplication != null;
     }
 
     /** 反射创建目标Service并attach上下文，失败时对GMS类名进行兼容跳过 */
+    // 反射创建 Service 并 attach 宿主上下文
     public Service createService(ServiceInfo serviceInfo, IBinder token) {
         if (!BActivityThread.currentActivityThread().isInit()) {
             BActivityThread.currentActivityThread().bindApplication(serviceInfo.packageName, serviceInfo.processName);
@@ -266,6 +288,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
 
     /** 创建JobService并调用onCreate/onBind，包含GMS兼容跳过 */
+    // 反射创建 JobService 并调用 onCreate/onBind
     public JobService createJobService(ServiceInfo serviceInfo) {
         if (!BActivityThread.currentActivityThread().isInit()) {
             BActivityThread.currentActivityThread().bindApplication(serviceInfo.packageName, serviceInfo.processName);
@@ -323,7 +346,9 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
 
     /** 绑定应用：主线程或切回主线程后完成绑定与handleBindApplication */
+    // 绑定应用入口：主线程中创建并安装 Application/Provider
     public void bindApplication(final String packageName, final String processName) {
+        Slog.e(TAG,"bindApplication() pck: " + packageName);
         if (Looper.myLooper() != Looper.getMainLooper()) {
             final ConditionVariable conditionVariable = new ConditionVariable();
             BlackBoxCore.get().getHandler().post(() -> {
@@ -342,6 +367,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     
     
     /** 构造轻量绑定数据：暴露getInfo/getProviders供后续反射访问 */
+    // 构造绑定数据（暴露 getInfo/getProviders 以便反射读取）
     private Object createBindApplicationData(String packageName, String processName) {
         try {
             
@@ -367,7 +393,9 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
 
     /** 处理绑定：完成LoadedApk、StrictMode、WebView目录、虚拟Runtime设置、Application创建与Provider安装 */
+    // 实际绑定逻辑：LoadedApk/StrictMode/WebView/Runtime/Application/Providers
     public synchronized void handleBindApplication(String packageName, String processName) {
+        Slog.e(TAG,"handleBindApplication() pck: " + packageName+" processName: "+processName);
         if (isInit())
             return;
         try {
@@ -1018,6 +1046,7 @@ public class BActivityThread extends IBActivityThread.Stub {
         }
     }
 
+    // 安装 Provider（逐项捕获异常，避免中断）
     private void installProviders(Context context, String processName, List<ProviderInfo> provider) {
         long origId = Binder.clearCallingIdentity();
         try {
@@ -1053,12 +1082,14 @@ public class BActivityThread extends IBActivityThread.Stub {
 
     @Override
     /** 返回系统ActivityThread的ApplicationThread Binder */
+    // 返回系统 ActivityThread 的 ApplicationThread Binder
     public IBinder getActivityThread() {
         return BRActivityThread.get(BlackBoxCore.mainThread()).getApplicationThread();
     }
 
     @Override
     /** 若未初始化则按当前AppConfig触发绑定 */
+    // 无参绑定：使用当前 AppConfig 中的包名/进程名
     public void bindApplication() {
         if (!isInit()) {
             bindApplication(getAppPackageName(), getAppProcessName());
@@ -1178,6 +1209,7 @@ public class BActivityThread extends IBActivityThread.Stub {
         });
     }
 
+    // 通过 Activity token 取出 Activity 实例
     public static Activity getActivityByToken(IBinder token) {
         Map<IBinder, Object> iBinderObjectMap =
                 BRActivityThread.get(BlackBoxCore.mainThread()).mActivities();
@@ -1203,6 +1235,7 @@ public class BActivityThread extends IBActivityThread.Stub {
     }
 
     
+    // 兜底为 Activity 附加可用的 Context，防止空指针
     public static void ensureActivityContext(Activity activity) {
         if (activity == null) {
             return;
