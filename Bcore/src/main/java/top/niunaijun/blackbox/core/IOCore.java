@@ -20,6 +20,8 @@ import top.niunaijun.blackbox.BlackBoxCore;
 
 import top.niunaijun.blackbox.core.env.BEnvironment;
 import top.niunaijun.blackbox.utils.FileUtils;
+import top.niunaijun.blackbox.core.settings.ProxySettingsCore;
+import top.niunaijun.blackbox.utils.Slog;
 import top.niunaijun.blackbox.utils.TrieTree;
 
 
@@ -63,18 +65,41 @@ public class IOCore {
         sBlackTree.add(path);
     }
 
-    /** 查询重定向结果：优先黑名单，随后最长前缀匹配替换 */
+    /** 查询重定向结果：优先黑名单，随后最长前缀匹配替换；在映射前先判断是否启用路径代理 */
     public String redirectPath(String path) {
-        if (TextUtils.isEmpty(path))
-            return path;
-        if (path.contains("/blackbox/")) {
+        Slog.d(TAG,"redirectPath() ：" + path);
+        if (path.contains("/blackbox/")) { // 主程序不做替换
+            Slog.d(TAG,"redirectPath() blackbox 主程序");
             return path;
         }
+        if (BlackBoxCore.get().isBlackProcess()) {
+            Slog.d(TAG,"redirectPath() 主程序");
+            return path;
+        }
+        if (TextUtils.isEmpty(path))
+            return path;
+        String pkg = BlackBoxCore.getAppPackageName();
+        if (TextUtils.isEmpty(pkg) && BlackBoxCore.getContext() != null) {
+            pkg = BlackBoxCore.getContext().getPackageName();
+        }
+        Slog.w(TAG,"pkg ：" + pkg);
+        if (pkg != null && pkg.contains("top.niunaijun.blackbox")){
+            Slog.w(TAG,"redirectPath() pkg 主程序");
+            return path;
+        }
+        // 用户/包名维度的开关：未开启路径代理则直接返回原路径
+        int userId = BlackBoxCore.getUserId();
+        Slog.d(TAG,"userId ：" + userId);
+
+        if (!ProxySettingsCore.isPathEnabled(userId, pkg)) {
+            Slog.w(TAG,"pkg ： 不需要替换路径");
+            return path;
+        }
+
+        Slog.e(TAG,"开始从");
         String search = sBlackTree.search(path);
         if (!TextUtils.isEmpty(search))
             return search;
-
-        
         String key = mTrieTree.search(path);
         if (!TextUtils.isEmpty(key))
             path = path.replace(key, Objects.requireNonNull(mRedirectMap.get(key)));
@@ -92,12 +117,20 @@ public class IOCore {
     public String redirectPath(String path, Map<String, String> rule) {
         if (TextUtils.isEmpty(path))
             return path;
-
-        
+        Slog.w(TAG,"redirectPath() 002： "+ path);
+        // 用户/包名维度的开关：未开启路径代理则直接返回原路径
+        int userId = BlackBoxCore.getUserId();
+        String pkg = BlackBoxCore.getAppPackageName();
+        if (TextUtils.isEmpty(pkg) && BlackBoxCore.getContext() != null) {
+            pkg = BlackBoxCore.getContext().getPackageName();
+        }
+        if (!ProxySettingsCore.isPathEnabled(userId, pkg)) {
+            return path;
+        }
         String key = mTrieTree.search(path);
         if (!TextUtils.isEmpty(key))
             path = path.replace(key, Objects.requireNonNull(rule.get(key)));
-
+        Slog.w(TAG,"redirectPath() 002 返回： "+ path);
         return path;
     }
 
@@ -114,6 +147,7 @@ public class IOCore {
      * 启用路径重定向：构建规则（nativeLib/dataDir/profiles/sdcard等）、可选隐藏root、注入到Native层。
      */
     public void enableRedirect(Context context) {
+        Slog.e(TAG,"enableRedirect() 启用路径代理 ");
         Map<String, String> rule = new LinkedHashMap<>();
         Set<String> blackRule = new HashSet<>();
         String packageName = context.getPackageName();

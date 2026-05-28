@@ -88,6 +88,7 @@ import top.niunaijun.blackbox.utils.LogSender;
 public class BlackBoxCore extends ClientConfiguration {
     public static final String TAG = "BlackBoxCore";
 
+    /** 全局单例 */
     private static final BlackBoxCore sBlackBoxCore = new BlackBoxCore();
     private static Context sContext;
     
@@ -225,6 +226,7 @@ public class BlackBoxCore extends ClientConfiguration {
         }
     }
 
+    /** 确保系统服务可用：必要时启动黑进程或使用兜底服务 */
     public boolean areServicesAvailable() {
         if (mServicesInitialized) {
             return true;
@@ -338,6 +340,7 @@ public class BlackBoxCore extends ClientConfiguration {
         return true;
     }
 
+    /** 获取指定名称的 Binder 服务，自动等待/兜底 */
     public IBinder getService(String name) {
         if (!areServicesAvailable()) {
             Slog.w(TAG, "Services not available, skipping service request: " + name);
@@ -347,6 +350,7 @@ public class BlackBoxCore extends ClientConfiguration {
         return getServiceInternal(name);
     }
     
+    /** 内部获取服务：优先真实 Binder，不可用时创建兜底 */
     private IBinder getServiceInternal(String name) {
         IBinder binder = mServices.get(name);
         if (binder != null && binder.isBinderAlive()) {
@@ -410,6 +414,7 @@ public class BlackBoxCore extends ClientConfiguration {
     }
     
     
+    /** 创建兜底服务占位（当前返回 null，避免循环依赖） */
     private IBinder createFallbackService(String name) {
         try {
             
@@ -425,6 +430,7 @@ public class BlackBoxCore extends ClientConfiguration {
 
     
     
+    /** 探测黑进程是否已就绪：Provider/Service 多路径检测 */
     private boolean isBlackProcessRunning() {
         try {
             
@@ -484,6 +490,7 @@ public class BlackBoxCore extends ClientConfiguration {
     }
     
     
+    /** 启动黑进程：按 O 前后台服务差异与重试机制拉起 */
     private void startBlackProcess() {
         try {
             Slog.d(TAG, "Starting black process...");
@@ -574,6 +581,7 @@ public class BlackBoxCore extends ClientConfiguration {
     }
     
     
+    /** 校验当前进程状态是否适合启动服务（主进程/上下文可用） */
     private boolean isValidProcessState() {
         try {
             
@@ -604,6 +612,7 @@ public class BlackBoxCore extends ClientConfiguration {
     }
     
     
+    /** 延迟重试启动服务：按重试次数递增延时 */
     private void scheduleDelayedRetry(Intent intent, int retry) {
         try {
             int delayMs = 1000 * retry;
@@ -637,6 +646,7 @@ public class BlackBoxCore extends ClientConfiguration {
     }
     
     
+    /** 异步校验 SystemCallProvider 可达性，记录启动结果 */
     private void scheduleProviderCheck() {
         try {
             android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());

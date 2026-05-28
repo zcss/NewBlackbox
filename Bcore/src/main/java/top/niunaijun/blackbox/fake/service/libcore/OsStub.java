@@ -12,6 +12,7 @@ import top.niunaijun.blackbox.fake.hook.ClassInvocationStub;
 import top.niunaijun.blackbox.fake.hook.MethodHook;
 import top.niunaijun.blackbox.fake.hook.ProxyMethod;
 import top.niunaijun.blackbox.utils.Reflector;
+import top.niunaijun.blackbox.utils.Slog;
 
 
 /**
@@ -56,9 +57,11 @@ public class OsStub extends ClassInvocationStub {
                 if (args[i] instanceof String && ((String) args[i]).startsWith("/")) {
                     String orig = (String) args[i];
                     args[i] = IOCore.get().redirectPath(orig);
-
-
-
+                    if (orig != null && !orig.equals(args[i])) {
+                        Slog.e(TAG,"路径被替换：" + orig + " -> " + args[i]);
+                    } else {
+                        Slog.e(TAG,"路径未被替换：" + orig + " -> " + args[i]);
+                    }
                 }
             }
         }

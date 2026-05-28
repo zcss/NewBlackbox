@@ -32,7 +32,7 @@ import top.niunaijun.blackboxa.bean.AppInfo;
 import top.niunaijun.blackboxa.bean.InstalledAppBean;
 import top.niunaijun.blackboxa.databinding.ActivityListBinding;
 import top.niunaijun.blackboxa.util.InjectionUtil;
-import top.niunaijun.blackboxa.util.ProxySettings;
+import top.niunaijun.blackbox.core.settings.ProxySettingsCore;
 import top.niunaijun.blackboxa.view.base.BaseActivity;
 import top.niunaijun.blackboxa.view.apps.AppsViewModel;
 import top.niunaijun.blackboxa.view.list.ListActivity;
@@ -98,7 +98,7 @@ public class FakePathProxyActivity extends BaseActivity {
                 // 仅显示该 userID 下安装的应用（非系统应用已在仓库层处理）
                 List<InstalledAppBean> beans = new java.util.ArrayList<>();
                 for (AppInfo app : list) {
-                    boolean enabled = ProxySettings.hasAnyConfig(this, userId, app.getPackageName());
+                    boolean enabled = ProxySettingsCore.hasAnyConfig(userId, app.getPackageName());
                     beans.add(new InstalledAppBean(app.getName(), app.getIcon(), app.getPackageName(), app.getSourceDir(), enabled));
                 }
                 mAdapter.setItems(beans, true, true);
@@ -191,8 +191,8 @@ public class FakePathProxyActivity extends BaseActivity {
         final String pkg = app.getPackageName();
 
         // 读取当前已保存状态
-        boolean savedPath = ProxySettings.isPathEnabled(this, userId, pkg);
-        boolean savedContacts = ProxySettings.isContactsEnabled(this, userId, pkg);
+        boolean savedPath = ProxySettingsCore.isPathEnabled(userId, pkg);
+        boolean savedContacts = ProxySettingsCore.isContactsEnabled( userId, pkg);
 
         // 动态构建复选框视图
         LinearLayout container = new LinearLayout(this);
@@ -218,8 +218,8 @@ public class FakePathProxyActivity extends BaseActivity {
                 .setPositiveButton(android.R.string.ok, (d, w) -> {
                     boolean pathChecked = cbPath.isChecked();
                     boolean contactsChecked = cbContacts.isChecked();
-                    ProxySettings.setPathEnabled(this, userId, pkg, pathChecked);
-                    ProxySettings.setContactsEnabled(this, userId, pkg, contactsChecked);
+                    ProxySettingsCore.setPathEnabled(userId, pkg, pathChecked);
+                    ProxySettingsCore.setContactsEnabled( userId, pkg, contactsChecked);
                     Toast.makeText(this, "已保存", Toast.LENGTH_SHORT).show();
                 })
                 .show();
